@@ -83,13 +83,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .portrait-frame.highlight {
             border-color: var(--red-accent);
             box-shadow: 0 0 12px var(--red-accent);
-            transform: scale(1.03);
-            transition: transform 0.2s;
+            transform: scale(1.04);
+            background: #4a1c10;
         }
 
         .portrait-img {
@@ -99,6 +100,7 @@
             border-radius: 4px;
             border: 1px solid var(--parchment-border);
             background: #442a15;
+            display: block;
         }
 
         .portrait-label {
@@ -110,7 +112,7 @@
             line-height: 1.1;
         }
 
-        /* EXPEDITION / STATS BAR */
+        /* PROGRESS STATS RIBBON */
         .stats-ribbon {
             background: rgba(140,88,39,0.15);
             border: 1px solid var(--parchment-border);
@@ -223,8 +225,8 @@
         }
 
         .splash-avatar {
-            width: 110px;
-            height: 110px;
+            width: 120px;
+            height: 120px;
             object-fit: cover;
             border-radius: 50%;
             border: 4px solid var(--gold);
@@ -258,7 +260,7 @@
             <img id="splash-img" class="splash-avatar" src="" alt="Court Member">
             <div id="splash-title" class="splash-heading">Royal Decree</div>
             <div id="splash-text" class="splash-body">A new chamber purge mission has been announced by the Crown!</div>
-            <button class="btn-royal" onclick="closeSplash()">Enter Chamber</button>
+            <button class="btn-royal" onclick="closeSplash()">Accept Mission</button>
         </div>
     </div>
 
@@ -274,19 +276,19 @@
         <!-- 4 PET PORTRAITS -->
         <div class="court-portraits">
             <div class="portrait-frame" id="frame-reginald">
-                <img class="portrait-img" id="img-reginald" src="" alt="King Reginald">
+                <img class="portrait-img" id="img-reginald" src="https://i.postimg.cc/HkfQhnP9/IMG-6186.jpg" alt="King Reginald">
                 <div class="portrait-label">King Reginald</div>
             </div>
             <div class="portrait-frame" id="frame-samoa">
-                <img class="portrait-img" id="img-samoa" src="" alt="Lady Samoa">
+                <img class="portrait-img" id="img-samoa" src="https://i.postimg.cc/sDMGCyWK/IMG-6184.jpg" alt="Lady Samoa">
                 <div class="portrait-label">Lady Samoa</div>
             </div>
             <div class="portrait-frame" id="frame-quinn">
-                <img class="portrait-img" id="img-quinn" src="" alt="Quinn the Guard">
+                <img class="portrait-img" id="img-quinn" src="https://i.postimg.cc/dtfdhDFH/IMG-6182.jpg" alt="Quinn the Guard">
                 <div class="portrait-label">Quinn Guard</div>
             </div>
             <div class="portrait-frame" id="frame-bird">
-                <img class="portrait-img" id="img-bird" src="" alt="Bird Herald">
+                <img class="portrait-img" id="img-bird" src="https://i.postimg.cc/k4jGLhXH/IMG-6185.jpg" alt="Bird Herald">
                 <div class="portrait-label">Bird Herald</div>
             </div>
         </div>
@@ -308,25 +310,19 @@
 
             <div class="timer" id="timer-display">15:00</div>
 
-            <button class="btn-royal" id="action-btn" onclick="handleButtonClick()">DEPLOY TO ZONE (15 MIN)</button>
+            <button class="btn-royal" id="action-btn" onclick="handleButtonClick()">DEPLOY TO ZONE (START 15M)</button>
         </div>
 
     </div>
 
     <script>
-        // Character Image Assets (Using your uploaded pet pictures)
+        // Character Image Direct Links
         const PET_PORTRAITS = {
-            reginald: 'https://images2.imgbox.com/f9/57/T8o8p4Xl_o.png', // Tuxedo King Cat
-            samoa:    'https://images2.imgbox.com/f8/f2/T2xV6uM5_o.png', // Tortoiseshell Lady Samoa
-            quinn:    'https://images2.imgbox.com/df/27/l78u4gN4_o.png', // Guard Dog Quinn
-            bird:     'https://images2.imgbox.com/e2/3b/6lC55JgK_o.png'  // Cockatiel Herald
+            reginald: 'https://i.postimg.cc/HkfQhnP9/IMG-6186.jpg',
+            samoa:    'https://i.postimg.cc/sDMGCyWK/IMG-6184.jpg',
+            quinn:    'https://i.postimg.cc/dtfdhDFH/IMG-6182.jpg',
+            bird:     'https://i.postimg.cc/k4jGLhXH/IMG-6185.jpg'
         };
-
-        // Populate portrait images
-        document.getElementById('img-reginald').src = PET_PORTRAITS.reginald;
-        document.getElementById('img-samoa').src = PET_PORTRAITS.samoa;
-        document.getElementById('img-quinn').src = PET_PORTRAITS.quinn;
-        document.getElementById('img-bird').src = PET_PORTRAITS.bird;
 
         const PET_INFO = {
             reginald: { name: 'King Reginald', img: PET_PORTRAITS.reginald, title: 'The Sovereign' },
@@ -337,11 +333,11 @@
 
         // Task & Location Pool
         const QUEST_POOL = [
-            { pet: 'quinn', zone: 'Bedroom Ward', text: 'Clear floor debris and box 5 clothing/personal items.', timer: 900 },
-            { pet: 'samoa', zone: 'Bedroom Ward', text: 'Sort wardrobe closet. Banish 5 expired/worn pieces to the discard pile.', timer: 900 },
-            { pet: 'bird', zone: 'Bedroom Nightstands', text: 'Untangle the wire vortex: bundle all cables and chargers into a bag.', timer: 600 },
+            { pet: 'quinn', zone: 'Bedroom Ward', text: 'Clear floor perimeter: pack or box 5 clothing/personal artifacts.', timer: 900 },
+            { pet: 'samoa', zone: 'Bedroom Ward', text: 'Sort wardrobe closet. Banish 5 expired or unneeded garments to the void.', timer: 900 },
+            { pet: 'bird', zone: 'Bedroom Nightstands', text: 'Untangle the wire vortex: bundle all cables and chargers safely.', timer: 600 },
             { pet: 'quinn', zone: 'Kitchen Armory', text: 'Pack one full box of dry dishware or non-essential cookware.', timer: 900 },
-            { pet: 'samoa', zone: 'Pantry Catacombs', text: 'Inspect goods: banish 8 expired foodstuffs to lighten the caravan.', timer: 900 },
+            { pet: 'samoa', zone: 'Pantry Catacombs', text: 'Inspect provisions: purge 8 expired foodstuffs to lighten the caravan.', timer: 900 },
             { pet: 'reginald', zone: 'Living Room Keep', text: 'Sort shelf media: box 10 books or items and tape the chest securely.', timer: 900 },
             { pet: 'quinn', zone: 'Garage Caverns', text: 'Workbench blitz: sort tools and consolidate hardware for 15 minutes.', timer: 900 }
         ];
@@ -375,7 +371,7 @@
             document.getElementById('splash-img').src = pet.img;
             document.getElementById('splash-title').innerText = heading;
             document.getElementById('splash-text').innerText = message;
-            document.querySelector('#splash-overlay .btn-royal').innerText = buttonText || "Enter Chamber";
+            document.querySelector('#splash-overlay .btn-royal').innerText = buttonText || "Accept Mission";
             document.getElementById('splash-overlay').classList.add('show');
         }
 
@@ -404,7 +400,7 @@
             triggerSplash(
                 currentQuest.pet,
                 "New Royal Decree!",
-                `${pet.name} demands attention in the ${currentQuest.zone}! Purge the clutter and prepare the chamber.`,
+                `${pet.name} demands an expedition in the ${currentQuest.zone}! Purge the clutter and prepare the chamber.`,
                 "Accept Mission"
             );
         }
@@ -452,7 +448,7 @@
                     "Receive Next Decree"
                 );
 
-                // Prepare next quest on close
+                // Reset button style and roll next quest
                 document.getElementById('action-btn').style.background = "linear-gradient(180deg, #d4af37 0%, #a17a2a 100%)";
                 document.getElementById('action-btn').style.color = "#1b120c";
                 rollNewMission();
