@@ -2,17 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <!-- Mobile App Full-Screen Settings -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Royal Court">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#09090b">
-  
-  <title>The Royal Court of King Reginald</title>
+  <title>The Great Migration: Royal Chronicles</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     .font-pixel { font-family: 'VT323', monospace; }
     @keyframes regal-hover {
@@ -20,88 +16,92 @@
       50% { transform: translateY(-4px) scale(1.02); }
     }
     .anim-portrait { animation: regal-hover 3s ease-in-out infinite; }
-    
-    /* Prevent iOS rubber-band overscroll */
-    html, body {
-      overscroll-behavior-y: none;
-      -webkit-tap-highlight-color: transparent;
-    }
+    html, body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
   </style>
 </head>
-<body class="bg-zinc-950 text-amber-50 min-h-screen flex items-center justify-center p-3 select-none">
+<body class="bg-zinc-950 text-amber-50 min-h-screen flex flex-col items-center justify-center p-3 select-none pb-8">
 
-  <!-- Castle Shell -->
-  <div class="max-w-xs w-full bg-gradient-to-b from-purple-950 via-zinc-900 to-zinc-950 border-4 border-amber-500/60 rounded-[44px] p-5 shadow-2xl space-y-3.5 text-center my-auto">
+  <div class="max-w-xs w-full bg-gradient-to-b from-purple-950 via-zinc-900 to-zinc-950 border-4 border-amber-500/60 rounded-[38px] p-4 shadow-2xl space-y-2.5 text-center my-auto">
     
-    <!-- King's Happiness Meter -->
-    <div class="space-y-1 bg-zinc-950/70 border border-purple-800/60 p-2.5 rounded-2xl">
-      <div class="flex justify-between items-center text-xs font-pixel text-amber-300 font-bold px-1">
-        <span>👑 KING'S HAPPINESS</span>
-        <span id="happinessPercent">0%</span>
+    <!-- Chapter Header -->
+    <div class="bg-amber-500/20 border border-amber-400/40 p-1.5 rounded-xl">
+      <div id="chapterTitle" class="text-amber-300 font-pixel text-xs tracking-wider uppercase font-bold">
+        ACT I: THE SIEGE OF CLUTTER
       </div>
-      <div class="w-full bg-purple-950 h-3 rounded-full border border-purple-700/60 overflow-hidden p-0.5">
-        <div id="happinessBar" class="bg-gradient-to-r from-amber-500 to-emerald-400 h-full w-0 rounded-full transition-all duration-500"></div>
+      <div id="chapterSub" class="text-[11px] font-pixel text-purple-200">
+        Objective: Cleanse the fortress for departure
       </div>
     </div>
 
-    <!-- Active Character Screen -->
-    <div class="bg-[#1b1326] border-4 border-amber-500/40 rounded-3xl p-3.5 shadow-inner space-y-2 relative overflow-hidden">
+    <!-- Campaign Expedition Trail -->
+    <div class="bg-zinc-950/80 border border-purple-800/60 p-2 rounded-xl text-left space-y-1">
+      <div class="flex justify-between text-[11px] font-pixel text-amber-300 font-bold">
+        <span>🗺️ EXPEDITION PROGRESS</span>
+        <span id="storyStepText">CHAPTER 1 - STEP 1/4</span>
+      </div>
+      <div class="w-full bg-zinc-900 h-2.5 rounded-full border border-purple-800/80 overflow-hidden">
+        <div id="storyProgressBar" class="bg-gradient-to-r from-amber-500 via-emerald-400 to-cyan-400 h-full w-0 rounded-full transition-all duration-500"></div>
+      </div>
+    </div>
+
+    <!-- Active Screen -->
+    <div id="screenBox" class="bg-[#1b1326] border-4 border-amber-500/40 rounded-2xl p-3 shadow-inner space-y-2 relative overflow-hidden">
       
-      <!-- Real Portrait Frame -->
-      <div class="flex items-center justify-center py-1 anim-portrait">
-        <div class="w-32 h-32 rounded-full border-4 border-amber-400 shadow-xl overflow-hidden bg-zinc-900 flex items-center justify-center ring-4 ring-purple-950">
+      <!-- Character Frame -->
+      <div class="flex items-center justify-center anim-portrait">
+        <div class="w-28 h-28 rounded-full border-4 border-amber-400 shadow-xl overflow-hidden bg-zinc-900 flex items-center justify-center ring-4 ring-purple-950">
           <img id="characterPhoto" src="" alt="Royal Character" class="w-full h-full object-cover">
         </div>
       </div>
 
-      <!-- Character Name -->
-      <h2 id="characterName" class="font-pixel text-base font-black tracking-wider text-amber-300 uppercase leading-tight">
+      <h2 id="characterName" class="font-pixel text-sm font-black tracking-wider text-amber-300 uppercase leading-tight">
         Character Name
       </h2>
 
-      <!-- Character Story Dialogue -->
-      <div class="bg-purple-950/60 border border-purple-800/50 rounded-xl p-2.5 text-xs font-pixel text-purple-200 italic leading-relaxed text-left">
-        <span id="characterQuote">"Royal decree goes here..."</span>
+      <!-- Story Dialogue -->
+      <div class="bg-purple-950/60 border border-purple-800/50 rounded-lg p-2 text-xs font-pixel text-purple-200 italic leading-snug text-left min-h-[44px] flex items-center">
+        <span id="characterQuote">"Story dialogue..."</span>
       </div>
 
-      <!-- Action Mission -->
-      <div class="bg-zinc-900 border border-amber-500/30 rounded-xl p-2 text-xs font-pixel font-bold text-amber-100 leading-snug">
-        <p id="taskText">Task instructions here</p>
+      <!-- Quest Objective -->
+      <div class="bg-zinc-900 border border-amber-500/30 rounded-lg p-2 text-xs font-pixel font-bold text-amber-100 leading-snug min-h-[36px] flex items-center justify-center">
+        <p id="taskText">Mission objective</p>
       </div>
 
-      <!-- Countdown Clock -->
-      <div class="bg-purple-950/80 py-1 px-5 rounded-xl border border-purple-700/80 inline-block">
-        <div id="timerDisplay" class="text-2xl font-black font-mono tracking-tight text-amber-300">05:00</div>
+      <div class="bg-purple-950/90 py-0.5 px-4 rounded-lg border border-purple-700/80 inline-block">
+        <div id="timerDisplay" class="text-xl font-black font-mono tracking-tight text-amber-300">05:00</div>
       </div>
-
     </div>
 
-    <!-- Interactive Buttons -->
-    <div class="space-y-2 font-pixel">
-      
-      <!-- Pre-Start Controls -->
+    <!-- Controls -->
+    <div class="space-y-1.5 font-pixel">
       <div id="preStartControls" class="grid grid-cols-2 gap-2">
-        <button onclick="skipTask()" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-zinc-300 font-bold py-2.5 rounded-2xl text-xs uppercase tracking-wider active:scale-95 transition">
-          Skip ↷
+        <button onclick="skipTask()" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-zinc-300 font-bold py-2 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition">
+          Scout Ahead ↷
         </button>
-        <button onclick="startTask()" class="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold py-2.5 rounded-2xl text-xs uppercase tracking-wider shadow-lg active:scale-95 transition">
-          Start Task ⚔️
+        <button onclick="startTask()" class="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold py-2 rounded-xl text-xs uppercase tracking-wider shadow-lg active:scale-95 transition">
+          Accept Quest ⚔️
         </button>
       </div>
 
-      <!-- Active Timer Button -->
       <div id="activeControls" class="hidden">
-        <button onclick="completeTask()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-2xl text-sm uppercase tracking-wider shadow-lg active:scale-95 transition">
-          Task Done! (+Happiness) 🐟
+        <button onclick="completeStoryTask()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg active:scale-95 transition">
+          Complete & Advance Plot 📜
         </button>
       </div>
+    </div>
 
+    <!-- Story Log Vault -->
+    <div class="pt-1 border-t border-zinc-800/80 text-left">
+      <div class="text-[10px] font-pixel text-zinc-400 tracking-wider font-bold">CHRONICLES OF THE REALM:</div>
+      <div id="storyLog" class="text-xs font-pixel text-amber-200/80 bg-zinc-950/60 p-2 rounded-xl border border-zinc-800 mt-1 min-h-[28px]">
+        The Court prepares for the Great Migration...
+      </div>
     </div>
 
   </div>
 
   <script>
-    // Direct Image Links
     const petPhotos = {
       reginald: "https://i.postimg.cc/HkfQhnP9/IMG-6186.jpg",
       samoa: "https://i.postimg.cc/sDMGCyWK/IMG-6184.jpg",
@@ -109,145 +109,120 @@
       bird: "https://i.postimg.cc/k4jGLhXH/IMG-6185.jpg"
     };
 
-    const tasks = [
-      // King Reginald
+    // Sequential Story Campaign
+    const campaignChapters = [
       {
-        charKey: "reginald",
-        name: "King Reginald T. Featherbottom",
-        quote: "\"I require an expansive, pristine sunspot for my royal nap. Rid this surface of your human rubbish at once!\"",
-        task: "Clear & sanitize 1 flat surface (desk, table, or counter) completely.",
-        time: 480
+        title: "ACT I: SECURING THE FORTRESS",
+        subtitle: "Scout the borders & clear the floorways",
+        quests: [
+          {
+            charKey: "quinn",
+            name: "Quinn the Royal Guard",
+            quote: "\"Intruders lurk across the floors! Patrol the perimeter and clear rogue objects before the packing carts arrive!\"",
+            task: "Clear all misplaced floor items and return 5 items to their home rooms.",
+            time: 300,
+            log: "Quinn secured the lower corridors."
+          },
+          {
+            charKey: "reginald",
+            name: "King Reginald T. Featherbottom",
+            quote: "\"The counters are smothered in mortal papers and debris! Cleanse my throne platform at once!\"",
+            task: "Wipe down and completely sanitize 1 primary surface or table.",
+            time: 420,
+            log: "The King's platform was purified."
+          },
+          {
+            charKey: "samoa",
+            name: "Lady Samoa of the Islands",
+            quote: "\"The wardrobe is choked with dead fabrics! Surrender 5 unworn garments to the donation vault!\"",
+            task: "Bag 5 clothing items to donate to travelers.",
+            time: 360,
+            log: "Lady Samoa banished unnecessary garments."
+          },
+          {
+            charKey: "bird",
+            name: "Bird the Royal Herald",
+            quote: "\"*Fanfare!* The scrap scrolls must burn! Shred 10 ancient receipts and junk papers!\"",
+            task: "Toss or shred 10 pieces of paper clutter.",
+            time: 240,
+            log: "Bird destroyed the ancient scrap scrolls."
+          }
+        ]
       },
       {
-        charKey: "reginald",
-        name: "King Reginald T. Featherbottom",
-        quote: "\"Look upon these broken items and cartons! Into the black sack of exile they must go, never to displease my whiskers again.\"",
-        task: "Black Bag Blitz: Fill 1 grocery or trash bag with broken junk/trash.",
-        time: 300
-      },
-      {
-        charKey: "reginald",
-        name: "King Reginald T. Featherbottom",
-        quote: "\"Ancient scrolls and junk mail clutter my sight. Shred them, toss them, and bring peace to my castle!\"",
-        task: "Toss or shred 10 pieces of junk mail, old receipts, or scrap paper.",
-        time: 240
-      },
-
-      // Lady Samoa
-      {
-        charKey: "samoa",
-        name: "Lady Samoa of the Islands",
-        quote: "\"The castle wardrobe is suffocating with unworn fabrics. Surrender them to the donation vault for the peasants!\"",
-        task: "Pull 5 clothing items you haven't worn in a year for donation.",
-        time: 420
-      },
-      {
-        charKey: "samoa",
-        name: "Lady Samoa of the Islands",
-        quote: "\"Our relocation caravan needs coin! Locate a high-value relic, take 3 clear photos, and ready it for the market.\"",
-        task: "Pick 1 sellable item, snap 3 photos, and place it in the sell bin.",
-        time: 420
-      },
-      {
-        charKey: "samoa",
-        name: "Lady Samoa of the Islands",
-        quote: "\"Duplicate tools offend the royal treasurer! Keep the finest one; the lesser clones must be donated.\"",
-        task: "Find 3 duplicate household items/tools and put them in the donate box.",
-        time: 360
-      },
-
-      // Quinn the Royal Guard
-      {
-        charKey: "quinn",
-        name: "Quinn the Royal Guard",
-        quote: "\"Halt! Intruding cardboard boxes have breached the gate! I will stand guard while you crush and stack them!\"",
-        task: "Flatten, stomp down, and neatly stack 5 empty cardboard boxes.",
-        time: 300
-      },
-      {
-        charKey: "quinn",
-        name: "Quinn the Royal Guard",
-        quote: "\"Sniff sniff... rogue objects are littering the royal floors! Gather 5 misplaced items and return them to their home rooms!\"",
-        task: "Pick up 5 out-of-place floor items and put them in their actual rooms.",
-        time: 300
-      },
-
-      // Bird the Royal Herald
-      {
-        charKey: "bird",
-        name: "Bird the Royal Herald",
-        quote: "\"*Fanfare Whistle!* The Royal Caravan departs soon! Pack non-perishables with haste before the great journey!\"",
-        task: "Completely fill and seal 1 moving box of non-essentials from one zone.",
-        time: 600
-      },
-      {
-        charKey: "bird",
-        name: "Bird the Royal Herald",
-        quote: "\"*Trumpet Call!* Dark secrets lurk in the messy drawers! Dump it completely—pack relics, trash the debris!\"",
-        task: "Dump 1 entire messy drawer: pack essentials, discard/donate the rest.",
-        time: 480
-      },
-      {
-        charKey: "bird",
-        name: "Bird the Royal Herald",
-        quote: "\"*Trill!* A tangled nest of electric serpents has formed! Untangle, bind, and pack them neatly!\"",
-        task: "Untangle and organize 4 stray charging cables or mystery cords.",
-        time: 300
+        title: "ACT II: PACKING THE CARAVAN",
+        subtitle: "Box the relics & seal the containers",
+        quests: [
+          {
+            charKey: "bird",
+            name: "Bird the Royal Herald",
+            quote: "\"The heavy transport chests have opened! Fill one complete box with library or shelf decor!\"",
+            task: "Pack, seal, and label 1 sturdy moving box.",
+            time: 600,
+            log: "The first royal crate was packed and labeled."
+          },
+          {
+            charKey: "quinn",
+            name: "Quinn the Royal Guard",
+            quote: "\"Cardboard invaders must be crushed to make room in the cart! Stomp 4 boxes flat!\"",
+            task: "Break down and stomp 4 empty cardboard boxes.",
+            time: 300,
+            log: "Quinn flattened the cardboard invaders."
+          },
+          {
+            charKey: "samoa",
+            name: "Lady Samoa of the Islands",
+            quote: "\"Duplicate tools will overburden our steeds! Pull 3 redundant kitchen or work tools!\"",
+            task: "Pull 3 duplicate items for donation or exile.",
+            time: 360,
+            log: "Excess weight was discarded from the carts."
+          },
+          {
+            charKey: "reginald",
+            name: "King Reginald T. Featherbottom",
+            quote: "\"FINAL DECREE: Empty the royal junk drawer completely! Pack the treasures, trash the rest!\"",
+            task: "Fully purge and sort 1 messy drawer.",
+            time: 480,
+            log: "The King declared the fortress ready for departure!"
+          }
+        ]
       }
     ];
 
-    let currentTask = null;
+    let currentChapterIdx = parseInt(localStorage.getItem('court_story_chapter') || '0');
+    let currentQuestIdx = parseInt(localStorage.getItem('court_story_quest') || '0');
     let timerInterval = null;
     let secondsLeft = 300;
 
-    function playChime() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const notes = [523.25, 659.25, 783.99, 1046.50];
-        notes.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.frequency.value = freq;
-          gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.1);
-          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.35);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(ctx.currentTime + idx * 0.1);
-          osc.stop(ctx.currentTime + idx * 0.1 + 0.4);
-        });
-      } catch (e) {}
-    }
+    function renderStoryUI() {
+      const chapter = campaignChapters[currentChapterIdx] || campaignChapters[0];
+      const quest = chapter.quests[currentQuestIdx] || chapter.quests[0];
 
-    function formatTime(s) {
-      const m = Math.floor(s / 60);
-      const sec = s % 60;
-      return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-    }
+      document.getElementById('chapterTitle').textContent = chapter.title;
+      document.getElementById('chapterSub').textContent = chapter.subtitle;
+      document.getElementById('storyStepText').textContent = `ACT ${currentChapterIdx + 1} - QUEST ${currentQuestIdx + 1}/${chapter.quests.length}`;
 
-    function updateHappinessUI() {
-      const happiness = Math.min(100, parseInt(localStorage.getItem('court_happiness') || '0'));
-      document.getElementById('happinessBar').style.width = `${happiness}%`;
-      document.getElementById('happinessPercent').textContent = `${happiness}%`;
-    }
+      const totalQuests = campaignChapters.reduce((acc, c) => acc + c.quests.length, 0);
+      const completedOverall = (currentChapterIdx * 4) + currentQuestIdx;
+      document.getElementById('storyProgressBar').style.width = `${(completedOverall / totalQuests) * 100}%`;
 
-    function loadRandomTask() {
-      clearInterval(timerInterval);
-      currentTask = tasks[Math.floor(Math.random() * tasks.length)];
-      
-      document.getElementById('characterPhoto').src = petPhotos[currentTask.charKey];
-      document.getElementById('characterName').textContent = currentTask.name;
-      document.getElementById('characterQuote').textContent = currentTask.quote;
-      document.getElementById('taskText').textContent = currentTask.task;
-      
-      secondsLeft = currentTask.time;
-      document.getElementById('timerDisplay').textContent = formatTime(secondsLeft);
+      document.getElementById('characterPhoto').src = petPhotos[quest.charKey];
+      document.getElementById('characterName').textContent = quest.name;
+      document.getElementById('characterQuote').textContent = quest.quote;
+      document.getElementById('taskText').textContent = quest.task;
+
+      secondsLeft = quest.time;
+      const m = Math.floor(secondsLeft / 60);
+      const s = secondsLeft % 60;
+      document.getElementById('timerDisplay').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 
       document.getElementById('activeControls').classList.add('hidden');
       document.getElementById('preStartControls').classList.remove('hidden');
-    }
 
-    function skipTask() {
-      loadRandomTask();
+      const lastLog = localStorage.getItem('court_last_log');
+      if (lastLog) {
+        document.getElementById('storyLog').textContent = `📜 Latest Chronicle: ${lastLog}`;
+      }
     }
 
     function startTask() {
@@ -257,7 +232,9 @@
       timerInterval = setInterval(() => {
         if (secondsLeft > 0) {
           secondsLeft--;
-          document.getElementById('timerDisplay').textContent = formatTime(secondsLeft);
+          const m = Math.floor(secondsLeft / 60);
+          const s = secondsLeft % 60;
+          document.getElementById('timerDisplay').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         } else {
           clearInterval(timerInterval);
           document.getElementById('timerDisplay').textContent = "TIME UP!";
@@ -265,25 +242,41 @@
       }, 1000);
     }
 
-    function completeTask() {
-      clearInterval(timerInterval);
-      playChime();
-
-      let currentHappy = parseInt(localStorage.getItem('court_happiness') || '0');
-      let newHappy = Math.min(100, currentHappy + 10);
-      localStorage.setItem('court_happiness', newHappy);
-      updateHappinessUI();
-
-      document.getElementById('characterQuote').textContent = "\"Splendid effort, human! The King purrs in delight!\"";
-      document.getElementById('taskText').textContent = "Task complete! Tribute recorded (+10% Happiness).";
-      
-      setTimeout(() => {
-        loadRandomTask();
-      }, 2200);
+    function skipTask() {
+      const chapter = campaignChapters[currentChapterIdx];
+      currentQuestIdx = (currentQuestIdx + 1) % chapter.quests.length;
+      renderStoryUI();
     }
 
-    loadRandomTask();
-    updateHappinessUI();
+    function completeStoryTask() {
+      clearInterval(timerInterval);
+      
+      try {
+        confetti({ particleCount: 70, spread: 60, origin: { y: 0.8 } });
+      } catch (e) {}
+
+      const chapter = campaignChapters[currentChapterIdx];
+      const quest = chapter.quests[currentQuestIdx];
+      localStorage.setItem('court_last_log', quest.log);
+
+      currentQuestIdx++;
+      if (currentQuestIdx >= chapter.quests.length) {
+        currentQuestIdx = 0;
+        currentChapterIdx = Math.min(campaignChapters.length - 1, currentChapterIdx + 1);
+      }
+
+      localStorage.setItem('court_story_chapter', currentChapterIdx);
+      localStorage.setItem('court_story_quest', currentQuestIdx);
+
+      document.getElementById('characterQuote').textContent = "\"The decree is fulfilled! The Great Migration marches forward!\"";
+      document.getElementById('taskText').textContent = "Quest recorded into the Royal Chronicles!";
+
+      setTimeout(() => {
+        renderStoryUI();
+      }, 2500);
+    }
+
+    renderStoryUI();
   </script>
 </body>
 </html>
