@@ -211,6 +211,27 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
+        .btn-reset {
+            background: transparent;
+            color: #8c5827;
+            border: 1px dashed #8c5827;
+            padding: 8px;
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 6px;
+            width: 100%;
+        }
+
+        .btn-reset:hover {
+            background: rgba(140,88,39,0.1);
+            color: var(--red-accent);
+            border-color: var(--red-accent);
+        }
+
         /* FULLSCREEN SPLASH OVERLAY */
         #splash-overlay {
             position: fixed;
@@ -315,7 +336,7 @@
 
         <!-- PROGRESS STATS -->
         <div class="stats-ribbon">
-            <div>📖 CHAPTER: <span id="stat-chapter" style="color:var(--red-accent);">1 / 8</span></div>
+            <div>📖 CHAPTER: <span id="stat-chapter" style="color:var(--red-accent);">1 / 5</span></div>
             <div>📦 CHESTS: <span id="stat-chests" style="color:var(--text-main);">0</span></div>
             <div>⚡ FAVOR: <span id="stat-favor" style="color:var(--gold);">100</span></div>
         </div>
@@ -337,6 +358,9 @@
 
             <button class="btn-royal" id="action-btn" onclick="handleButtonClick()">DEPLOY TO ZONE (START 15M)</button>
         </div>
+
+        <!-- RESET CAMPAIGN BUTTON -->
+        <button class="btn-reset" onclick="resetCampaign()">↺ Restart Chronicle from Chapter 1</button>
 
     </div>
 
@@ -451,9 +475,8 @@
             document.getElementById('splash-overlay').classList.remove('show');
         }
 
-        function loadCurrentChapter() {
+        function loadCurrentChapter(showIntro = true) {
             if (chapterIdx >= STORY_CAMPAIGN.length) {
-                // Campaign loop or expansion
                 chapterIdx = STORY_CAMPAIGN.length - 1;
             }
 
@@ -478,13 +501,14 @@
             document.getElementById('action-btn').style.background = "linear-gradient(180deg, #d4af37 0%, #a17a2a 100%)";
             document.getElementById('action-btn').style.color = "#1b120c";
 
-            // Show Story Intro Splash Cutscene
-            triggerSplash(
-                currentQuest.pet,
-                currentQuest.title,
-                currentQuest.introCutscene,
-                "Begin Chapter"
-            );
+            if (showIntro) {
+                triggerSplash(
+                    currentQuest.pet,
+                    currentQuest.title,
+                    currentQuest.introCutscene,
+                    "Begin Chapter"
+                );
+            }
         }
 
         function renderTimer() {
@@ -524,7 +548,7 @@
                 if (chapterIdx < STORY_CAMPAIGN.length - 1) {
                     chapterIdx += 1;
                 } else {
-                    chapterIdx = 0; // Loops or can add more chapters
+                    chapterIdx = 0;
                 }
 
                 localStorage.setItem('clutter_campaign_idx', chapterIdx);
@@ -539,12 +563,27 @@
                     "Next Chapter"
                 );
 
-                loadCurrentChapter();
+                loadCurrentChapter(false);
+            }
+        }
+
+        // RESET FUNCTIONALITY
+        function resetCampaign() {
+            if (confirm("Dost thou wish to reset the Royal Chronicle back to Chapter 1? All chests and favor points will be reset.")) {
+                localStorage.removeItem('clutter_campaign_idx');
+                localStorage.removeItem('clutter_chests');
+                localStorage.removeItem('clutter_favor');
+
+                chapterIdx = 0;
+                chestsPacked = 0;
+                favorPoints = 100;
+
+                loadCurrentChapter(true);
             }
         }
 
         // Init on page load
-        loadCurrentChapter();
+        loadCurrentChapter(true);
     </script>
 </body>
 </html>
