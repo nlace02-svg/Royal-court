@@ -3,351 +3,464 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sovereign Clutter Chronicles - RLRPG</title>
+    <title>Royal Decree: The Siege of Clutter</title>
     <style>
         :root {
-            --bg-color: #2c1a12;
-            --parchment-base: #f4e4bc;
-            --parchment-border: #a17a56;
-            --gold-accent: #c9a55c;
-            --text-dark: #3e2816;
-            --quinn-red: #8b0000;
-            --samoa-blue: #0047ab;
-            --reginald-gold: #b8860b;
+            --bg-dark: #1b120c;
+            --parchment: #f6ebd2;
+            --parchment-border: #8c5827;
+            --gold: #d4af37;
+            --gold-light: #f7e199;
+            --text-main: #341e09;
+            --red-accent: #8b1e1e;
         }
 
         body {
-            font-family: 'Georgia', serif;
-            background-color: var(--bg-color);
-            color: var(--text-dark);
             margin: 0;
+            padding: 16px;
+            background-color: var(--bg-dark);
+            font-family: 'Georgia', serif;
+            color: var(--text-main);
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
         }
 
-        /* RPG SPLASH SCREEN OVERLAY */
-        #splash-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
+        .scroll-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--parchment);
+            border: 8px double var(--parchment-border);
+            box-shadow: 0 0 25px rgba(0,0,0,0.8), inset 0 0 40px rgba(140,88,39,0.3);
+            padding: 16px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
+            gap: 14px;
+            box-sizing: border-box;
+        }
+
+        /* HEADER & BANNER */
+        .royal-header {
+            text-align: center;
+            border-bottom: 3px solid var(--parchment-border);
+            padding-bottom: 10px;
+        }
+
+        .banner-subtitle {
+            font-size: 11px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            color: var(--parchment-border);
+            text-transform: uppercase;
+        }
+
+        .banner-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--red-accent);
+            text-transform: uppercase;
+            margin: 4px 0;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.6);
+        }
+
+        /* PET PORTRAIT GALLERY */
+        .court-portraits {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+
+        .portrait-frame {
+            background: #2a1608;
+            border: 3px solid var(--gold);
+            border-radius: 6px;
+            padding: 4px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .portrait-frame.highlight {
+            border-color: var(--red-accent);
+            box-shadow: 0 0 12px var(--red-accent);
+            transform: scale(1.03);
+            transition: transform 0.2s;
+        }
+
+        .portrait-img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid var(--parchment-border);
+            background: #442a15;
+        }
+
+        .portrait-label {
+            font-size: 9px;
+            font-weight: bold;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            margin-top: 4px;
+            line-height: 1.1;
+        }
+
+        /* EXPEDITION / STATS BAR */
+        .stats-ribbon {
+            background: rgba(140,88,39,0.15);
+            border: 1px solid var(--parchment-border);
+            border-radius: 6px;
+            padding: 8px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        /* MISSION CARD */
+        .mission-box {
+            background: rgba(255, 255, 255, 0.65);
+            border: 2px solid var(--parchment-border);
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .zone-badge {
+            display: inline-block;
+            background: var(--red-accent);
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .assigner-text {
+            font-size: 13px;
+            font-style: italic;
+            color: #664120;
+            margin-bottom: 10px;
+        }
+
+        .task-detail {
+            font-size: 16px;
+            line-height: 1.4;
+            font-weight: bold;
+            color: var(--text-main);
+            margin: 10px 0 14px 0;
+            min-height: 44px;
+        }
+
+        .timer {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--red-accent);
+            letter-spacing: 2px;
+            margin-bottom: 14px;
+        }
+
+        /* BUTTONS */
+        .btn-royal {
+            width: 100%;
+            background: linear-gradient(180deg, #d4af37 0%, #a17a2a 100%);
+            color: #1b120c;
+            border: 2px solid #5a3d12;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .btn-royal:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* FULLSCREEN SPLASH OVERLAY */
+        #splash-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 8, 4, 0.92);
+            display: flex;
             justify-content: center;
             align-items: center;
             z-index: 10000;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
             pointer-events: none;
+            transition: opacity 0.35s ease;
             padding: 20px;
             box-sizing: border-box;
         }
 
-        #splash-overlay.active {
+        #splash-overlay.show {
             opacity: 1;
             pointer-events: auto;
         }
 
-        #splash-parchment {
-            background-color: var(--parchment-base);
-            border: 8px solid var(--parchment-border);
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 0 30px rgba(201, 165, 92, 0.5);
-            max-width: 500px;
-            position: relative;
-        }
-
-        #splash-icon-container {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px auto;
-            border-radius: 50%;
-            border: 5px solid var(--gold-accent);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: var(--bg-color);
-        }
-
-        #splash-pet-icon {
-            font-size: 80px;
-        }
-
-        #splash-title {
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--reginald-gold);
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        #splash-dialogue {
-            font-size: 18px;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            color: var(--text-dark);
-        }
-
-        #splash-continue {
-            background-color: var(--bg-color);
-            color: var(--gold-accent);
-            border: 2px solid var(--gold-accent);
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            border-radius: 5px;
-            text-transform: uppercase;
-        }
-
-        /* MAIN GAME INTERFACE */
-        #game-view {
-            width: 100%;
+        .splash-card {
+            background: var(--parchment);
+            border: 6px double var(--parchment-border);
+            border-radius: 12px;
+            padding: 22px;
             max-width: 400px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--parchment-base);
-            border: 6px solid var(--parchment-border);
-            box-sizing: border-box;
-        }
-
-        header {
-            background-color: var(--bg-color);
-            color: var(--gold-accent);
-            padding: 15px;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            border-bottom: 4px solid var(--gold-accent);
-        }
-
-        #progress-area {
-            background-color: rgba(62, 40, 22, 0.1);
-            padding: 10px 15px;
-            border-bottom: 2px solid var(--parchment-border);
-            text-align: center;
-        }
-
-        #mission-card {
-            flex-grow: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #quest-meta {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        #quest-location-zone {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--quinn-red);
-            text-transform: uppercase;
-        }
-
-        #quest-pet-name {
-            font-size: 16px;
-            color: #666;
-            font-style: italic;
-        }
-
-        #quest-description {
-            background: rgba(255, 255, 255, 0.5);
-            border: 2px solid var(--parchment-border);
-            padding: 15px;
-            font-size: 18px;
-            line-height: 1.5;
-            flex-grow: 1;
-            margin-bottom: 20px;
-        }
-
-        #timer-display {
-            font-size: 40px;
-            color: var(--quinn-red);
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        #action-button {
             width: 100%;
-            background-color: #c9a55c;
-            color: #fff;
-            border: none;
-            padding: 15px;
-            font-size: 20px;
-            cursor: pointer;
-            border-radius: 8px;
-            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
         }
 
-        #action-button:hover { background-color: #bfa050; }
+        .splash-avatar {
+            width: 110px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            margin: 0 auto 12px auto;
+            display: block;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            background: #2a1608;
+        }
 
-        footer {
-            background-color: var(--parchment-border);
-            color: #fff;
-            padding: 8px;
-            text-align: center;
-            font-size: 12px;
+        .splash-heading {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--red-accent);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .splash-body {
+            font-size: 15px;
+            line-height: 1.45;
+            color: var(--text-main);
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. RPG SPLASH SCREEN OVERLAY -->
+    <!-- RPG SPLASH OVERLAY -->
     <div id="splash-overlay">
-        <div id="splash-parchment">
-            <div id="splash-icon-container">
-                <div id="splash-pet-icon">🐾</div>
-            </div>
-            <div id="splash-title">Royal Decree</div>
-            <div id="splash-dialogue">Hear ye, champion. The Siege Fog is thick in the Indiana Fortress. A fresh mission has been declared!</div>
-            <button id="splash-continue" onclick="acceptMission()">Accept Quest</button>
+        <div class="splash-card">
+            <img id="splash-img" class="splash-avatar" src="" alt="Court Member">
+            <div id="splash-title" class="splash-heading">Royal Decree</div>
+            <div id="splash-text" class="splash-body">A new chamber purge mission has been announced by the Crown!</div>
+            <button class="btn-royal" onclick="closeSplash()">Enter Chamber</button>
         </div>
     </div>
 
-    <!-- 2. MAIN GAME INTERFACE -->
-    <div id="game-view">
-        <header>FORTRESS PREPARATION MANUAL</header>
+    <!-- MAIN SCROLL VIEW -->
+    <div class="scroll-container">
+        
+        <header class="royal-header">
+            <div class="banner-subtitle">Royal Decree</div>
+            <div class="banner-title">The Siege of Clutter</div>
+            <div style="font-size: 12px; color: #70471e; font-weight: bold;">FORTRESS PREPARATION CAMPAIGN</div>
+        </header>
 
-        <div id="progress-area">
-            CHESTS SECURED: <span id="boxes-packed-count">0</span> | INVENTORY cleared: <span id="percent-complete">0%</span>
+        <!-- 4 PET PORTRAITS -->
+        <div class="court-portraits">
+            <div class="portrait-frame" id="frame-reginald">
+                <img class="portrait-img" id="img-reginald" src="" alt="King Reginald">
+                <div class="portrait-label">King Reginald</div>
+            </div>
+            <div class="portrait-frame" id="frame-samoa">
+                <img class="portrait-img" id="img-samoa" src="" alt="Lady Samoa">
+                <div class="portrait-label">Lady Samoa</div>
+            </div>
+            <div class="portrait-frame" id="frame-quinn">
+                <img class="portrait-img" id="img-quinn" src="" alt="Quinn the Guard">
+                <div class="portrait-label">Quinn Guard</div>
+            </div>
+            <div class="portrait-frame" id="frame-bird">
+                <img class="portrait-img" id="img-bird" src="" alt="Bird Herald">
+                <div class="portrait-label">Bird Herald</div>
+            </div>
         </div>
 
-        <div id="mission-card">
-            <div id="quest-meta">
-                <div id="quest-location-zone">ZONE: BEDROOM WARD</div>
-                <div id="quest-pet-name">Assigned by Quinn the Guard</div>
+        <!-- PROGRESS STATS -->
+        <div class="stats-ribbon">
+            <div>📦 CHESTS PACKED: <span id="stat-chests" style="color:var(--red-accent);">0</span></div>
+            <div>⚡ ROYAL FAVOR: <span id="stat-favor" style="color:var(--gold);">100</span></div>
+        </div>
+
+        <!-- MISSION ASSIGNMENT -->
+        <div class="mission-box">
+            <div class="zone-badge" id="zone-badge">BEDROOM WARD</div>
+            <div class="assigner-text" id="assigner-name">Assigned by Quinn the Guard</div>
+
+            <div class="task-detail" id="task-text">
+                Scan your bedroom scroll NFC tag to receive a randomized zone mission.
             </div>
 
-            <div id="quest-description">Scan the Scroll of Departure (The Bedroom Tag) to receive thy next packing decree.</div>
+            <div class="timer" id="timer-display">15:00</div>
 
-            <div id="timer-display">15:00</div>
-
-            <button id="action-button" onclick="completeQuest()">DEPLOY TO ZONE</button>
+            <button class="btn-royal" id="action-btn" onclick="handleButtonClick()">DEPLOY TO ZONE (15 MIN)</button>
         </div>
 
-        <footer>Sovereign Court & Co. | Indiana Division</footer>
     </div>
 
     <script>
-        // RPG CORE DATA: The Task & Location Dispatch Pool
-        const PET_ROLES = {
-            quinn: { name: "Quinn the Guard", icon: "🐶", color: "var(--quinn-red)" },
-            samoa: { name: "Lady Samoa", icon: "🐱", color: "var(--samoa-blue)" },
-            reginald: { name: "King Reginald", icon: "👑", color: "var(--reginald-gold)" }
+        // Character Image Assets (Using your uploaded pet pictures)
+        const PET_PORTRAITS = {
+            reginald: 'https://images2.imgbox.com/f9/57/T8o8p4Xl_o.png', // Tuxedo King Cat
+            samoa:    'https://images2.imgbox.com/f8/f2/T2xV6uM5_o.png', // Tortoiseshell Lady Samoa
+            quinn:    'https://images2.imgbox.com/df/27/l78u4gN4_o.png', // Guard Dog Quinn
+            bird:     'https://images2.imgbox.com/e2/3b/6lC55JgK_o.png'  // Cockatiel Herald
         };
 
+        // Populate portrait images
+        document.getElementById('img-reginald').src = PET_PORTRAITS.reginald;
+        document.getElementById('img-samoa').src = PET_PORTRAITS.samoa;
+        document.getElementById('img-quinn').src = PET_PORTRAITS.quinn;
+        document.getElementById('img-bird').src = PET_PORTRAITS.bird;
+
+        const PET_INFO = {
+            reginald: { name: 'King Reginald', img: PET_PORTRAITS.reginald, title: 'The Sovereign' },
+            samoa:    { name: 'Lady Samoa', img: PET_PORTRAITS.samoa, title: 'Grand Mistress' },
+            quinn:    { name: 'Quinn the Guard', img: PET_PORTRAITS.quinn, title: 'Perimeter Warden' },
+            bird:     { name: 'Bird the Herald', img: PET_PORTRAITS.bird, title: 'Crown Messenger' }
+        };
+
+        // Task & Location Pool
         const QUEST_POOL = [
-            { pet: 'quinn', room: 'Kitchen Armory', task: 'Sort the cutlery drawer and box 1 priority item.', timer: 900 },
-            { pet: 'samoa', room: 'Bedroom Ward', task: 'Purge 5 items from the wardrobe Vault (Donation/Trash).', timer: 900 },
-            { pet: 'quinn', room: 'Living Room Keep', task: 'Pack one shelf of books/media and seal the chest.', timer: 900 },
-            { pet: 'samoa', room: 'Kitchen Armory', task: 'Check expired goods in the main pantry and purge 10 items.', timer: 900 },
-            { pet: 'quinn', room: 'The Garage Caverns', task: 'Sort the workbench. Group tools and wipe surfaces for 15 mins.', timer: 900 },
-            { pet: 'reginald', room: 'Bedroom Ward', task: 'Untangle the wire abyss: Secure all phone & device chargers.', timer: 600 }
+            { pet: 'quinn', zone: 'Bedroom Ward', text: 'Clear floor debris and box 5 clothing/personal items.', timer: 900 },
+            { pet: 'samoa', zone: 'Bedroom Ward', text: 'Sort wardrobe closet. Banish 5 expired/worn pieces to the discard pile.', timer: 900 },
+            { pet: 'bird', zone: 'Bedroom Nightstands', text: 'Untangle the wire vortex: bundle all cables and chargers into a bag.', timer: 600 },
+            { pet: 'quinn', zone: 'Kitchen Armory', text: 'Pack one full box of dry dishware or non-essential cookware.', timer: 900 },
+            { pet: 'samoa', zone: 'Pantry Catacombs', text: 'Inspect goods: banish 8 expired foodstuffs to lighten the caravan.', timer: 900 },
+            { pet: 'reginald', zone: 'Living Room Keep', text: 'Sort shelf media: box 10 books or items and tape the chest securely.', timer: 900 },
+            { pet: 'quinn', zone: 'Garage Caverns', text: 'Workbench blitz: sort tools and consolidate hardware for 15 minutes.', timer: 900 }
         ];
 
-        let currentQuestIndex = null;
-        let timerSeconds = 0;
+        let currentQuest = null;
+        let timerSeconds = 900;
+        let timerRunning = false;
         let timerInterval = null;
-        let totalPacked = localStorage.getItem('boxesPacked') || 0;
 
-        // UI Initialization
-        document.getElementById('boxes-packed-count').innerText = totalPacked;
+        let chestsPacked = parseInt(localStorage.getItem('clutter_chests') || '0', 10);
+        let favorPoints = parseInt(localStorage.getItem('clutter_favor') || '100', 10);
 
-        // RPG ENGINE 1: Trigger the Splash Scene Cutscene
-        function showSplashCutscene(quest, isIntro) {
-            const pet = PET_ROLES[quest.pet];
-            const splash = document.getElementById('splash-overlay');
-            const icon = document.getElementById('splash-pet-icon');
-            const title = document.getElementById('splash-title');
-            const dialogue = document.getElementById('splash-dialogue');
-            const button = document.getElementById('splash-continue');
+        function updateStatsDisplay() {
+            document.getElementById('stat-chests').innerText = chestsPacked;
+            document.getElementById('stat-favor').innerText = favorPoints;
+        }
+        updateStatsDisplay();
 
-            icon.innerText = pet.icon;
-            title.innerText = isIntro ? "Fresh Decree" : "VICTORY ACHIEVED!";
-            title.style.color = pet.color;
-            dialogue.innerText = isIntro ? `Quinn reports movement in the ${quest.room}! Champion, deploy swiftly and resolve this objective.` : `Order is restored to the ${quest.room}. King Reginald acknowledges thy victory!`;
-            button.innerText = isIntro ? "DEPLPY TO ZONE" : "Claim Royal Favor";
-            
-            splash.classList.add('active');
+        function highlightPortrait(petKey) {
+            ['reginald', 'samoa', 'quinn', 'bird'].forEach(p => {
+                document.getElementById(`frame-${p}`).classList.remove('highlight');
+            });
+            if (petKey && document.getElementById(`frame-${petKey}`)) {
+                document.getElementById(`frame-${petKey}`).classList.add('highlight');
+            }
         }
 
-        // RPG ENGINE 2: Mission Dispatch
-        function dispatchNewMission() {
-            // Pick a random quest from the pool
-            currentQuestIndex = Math.floor(Math.random() * QUEST_POOL.length);
-            const quest = QUEST_POOL[currentQuestIndex];
+        // Trigger Splash Cutscene
+        function triggerSplash(petKey, heading, message, buttonText) {
+            const pet = PET_INFO[petKey];
+            document.getElementById('splash-img').src = pet.img;
+            document.getElementById('splash-title').innerText = heading;
+            document.getElementById('splash-text').innerText = message;
+            document.querySelector('#splash-overlay .btn-royal').innerText = buttonText || "Enter Chamber";
+            document.getElementById('splash-overlay').classList.add('show');
+        }
 
-            // 1. Load the data to the interface
-            const petData = PET_ROLES[quest.pet];
-            document.getElementById('quest-location-zone').innerText = `ZONE: ${quest.room.toUpperCase()}`;
-            document.getElementById('quest-location-zone').style.color = petData.color;
-            document.getElementById('quest-pet-name').innerText = `Decree of ${petData.name}`;
-            document.getElementById('quest-description').innerText = quest.task;
-            timerSeconds = quest.timer;
-            updateTimerDisplay();
+        function closeSplash() {
+            document.getElementById('splash-overlay').classList.remove('show');
+        }
 
-            // 2. Clear previous timer and set to default state
+        // New Mission Assignment
+        function rollNewMission() {
+            currentQuest = QUEST_POOL[Math.floor(Math.random() * QUEST_POOL.length)];
+            const pet = PET_INFO[currentQuest.pet];
+
+            document.getElementById('zone-badge').innerText = currentQuest.zone;
+            document.getElementById('assigner-name').innerText = `Decree of ${pet.name}`;
+            document.getElementById('task-text').innerText = currentQuest.text;
+
+            timerSeconds = currentQuest.timer;
+            timerRunning = false;
             clearInterval(timerInterval);
-            document.getElementById('action-button').innerText = "BEGIN BLITZ (15 MIN)";
+            renderTimer();
 
-            // 3. Show the Intro Splash Screen
-            showSplashCutscene(quest, true);
+            highlightPortrait(currentQuest.pet);
+            document.getElementById('action-btn').innerText = "DEPLOY TO ZONE (START 15M)";
+
+            // Show Mission Splash Screen
+            triggerSplash(
+                currentQuest.pet,
+                "New Royal Decree!",
+                `${pet.name} demands attention in the ${currentQuest.zone}! Purge the clutter and prepare the chamber.`,
+                "Accept Mission"
+            );
         }
 
-        // Action: Accept the mission from the splash screen
-        function acceptMission() {
-            const splash = document.getElementById('splash-overlay');
-            splash.classList.remove('active');
-            startTimer(); // The timer only starts once you "Deploy"
+        function renderTimer() {
+            const m = Math.floor(timerSeconds / 60);
+            const s = timerSeconds % 60;
+            document.getElementById('timer-display').innerText = 
+                `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         }
 
-        // Timer Logic
-        function startTimer() {
-            document.getElementById('action-button').innerText = "MARK TASK COMPLETE";
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timerSeconds--;
-                updateTimerDisplay();
-                if (timerSeconds <= 0) {
-                    clearInterval(timerInterval);
-                    timerDisplay.innerText = "TIME'S UP!";
-                }
-            }, 1000);
+        function handleButtonClick() {
+            if (!timerRunning) {
+                // Start Blitz Timer
+                timerRunning = true;
+                document.getElementById('action-btn').innerText = "MARK CHAMBER PURGED (COMPLETE)";
+                document.getElementById('action-btn').style.background = "linear-gradient(180deg, #8b1e1e 0%, #5a1212 100%)";
+                document.getElementById('action-btn').style.color = "#fff";
+
+                timerInterval = setInterval(() => {
+                    if (timerSeconds > 0) {
+                        timerSeconds--;
+                        renderTimer();
+                    } else {
+                        clearInterval(timerInterval);
+                        document.getElementById('timer-display').innerText = "TIME!";
+                    }
+                }, 1000);
+            } else {
+                // Complete Quest
+                clearInterval(timerInterval);
+                timerRunning = false;
+                chestsPacked += 1;
+                favorPoints += 50;
+
+                localStorage.setItem('clutter_chests', chestsPacked);
+                localStorage.setItem('clutter_favor', favorPoints);
+                updateStatsDisplay();
+
+                const pet = PET_INFO[currentQuest.pet];
+                triggerSplash(
+                    currentQuest.pet,
+                    "Chamber Cleansed!",
+                    `Splendid work! ${pet.name} commends thy diligence. 1 Chest secured & +50 Royal Favor earned!`,
+                    "Receive Next Decree"
+                );
+
+                // Prepare next quest on close
+                document.getElementById('action-btn').style.background = "linear-gradient(180deg, #d4af37 0%, #a17a2a 100%)";
+                document.getElementById('action-btn').style.color = "#1b120c";
+                rollNewMission();
+            }
         }
 
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timerSeconds / 60);
-            const seconds = timerSeconds % 60;
-            document.getElementById('timer-display').innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
-
-        // RPG ENGINE 3: Task Complete Milestone
-        function completeQuest() {
-            if (currentQuestIndex === null) return; // Prevent clicking before mission
-
-            // 1. Bank the Victory
-            clearInterval(timerInterval);
-            totalPacked++;
-            localStorage.setItem('boxesPacked', totalPacked);
-            document.getElementById('boxes-packed-count').innerText = totalPacked;
-
-            // 2. Show Victory Splash Screen
-            showSplashCutscene(QUEST_POOL[currentQuestIndex], false);
-        }
-
-        // INIT: On initial scan, dispatch the first randomized mission.
-        dispatchNewMission();
+        // Init on page load
+        rollNewMission();
     </script>
 </body>
 </html>
