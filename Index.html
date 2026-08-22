@@ -1,282 +1,353 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>The Great Migration: Royal Chronicles</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <style>
-    .font-pixel { font-family: 'VT323', monospace; }
-    @keyframes regal-hover {
-      0%, 100% { transform: translateY(0px) scale(1); }
-      50% { transform: translateY(-4px) scale(1.02); }
-    }
-    .anim-portrait { animation: regal-hover 3s ease-in-out infinite; }
-    html, body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
-  </style>
-</head>
-<body class="bg-zinc-950 text-amber-50 min-h-screen flex flex-col items-center justify-center p-3 select-none pb-8">
-
-  <div class="max-w-xs w-full bg-gradient-to-b from-purple-950 via-zinc-900 to-zinc-950 border-4 border-amber-500/60 rounded-[38px] p-4 shadow-2xl space-y-2.5 text-center my-auto">
-    
-    <!-- Chapter Header -->
-    <div class="bg-amber-500/20 border border-amber-400/40 p-1.5 rounded-xl">
-      <div id="chapterTitle" class="text-amber-300 font-pixel text-xs tracking-wider uppercase font-bold">
-        ACT I: THE SIEGE OF CLUTTER
-      </div>
-      <div id="chapterSub" class="text-[11px] font-pixel text-purple-200">
-        Objective: Cleanse the fortress for departure
-      </div>
-    </div>
-
-    <!-- Campaign Expedition Trail -->
-    <div class="bg-zinc-950/80 border border-purple-800/60 p-2 rounded-xl text-left space-y-1">
-      <div class="flex justify-between text-[11px] font-pixel text-amber-300 font-bold">
-        <span>🗺️ EXPEDITION PROGRESS</span>
-        <span id="storyStepText">CHAPTER 1 - STEP 1/4</span>
-      </div>
-      <div class="w-full bg-zinc-900 h-2.5 rounded-full border border-purple-800/80 overflow-hidden">
-        <div id="storyProgressBar" class="bg-gradient-to-r from-amber-500 via-emerald-400 to-cyan-400 h-full w-0 rounded-full transition-all duration-500"></div>
-      </div>
-    </div>
-
-    <!-- Active Screen -->
-    <div id="screenBox" class="bg-[#1b1326] border-4 border-amber-500/40 rounded-2xl p-3 shadow-inner space-y-2 relative overflow-hidden">
-      
-      <!-- Character Frame -->
-      <div class="flex items-center justify-center anim-portrait">
-        <div class="w-28 h-28 rounded-full border-4 border-amber-400 shadow-xl overflow-hidden bg-zinc-900 flex items-center justify-center ring-4 ring-purple-950">
-          <img id="characterPhoto" src="" alt="Royal Character" class="w-full h-full object-cover">
-        </div>
-      </div>
-
-      <h2 id="characterName" class="font-pixel text-sm font-black tracking-wider text-amber-300 uppercase leading-tight">
-        Character Name
-      </h2>
-
-      <!-- Story Dialogue -->
-      <div class="bg-purple-950/60 border border-purple-800/50 rounded-lg p-2 text-xs font-pixel text-purple-200 italic leading-snug text-left min-h-[44px] flex items-center">
-        <span id="characterQuote">"Story dialogue..."</span>
-      </div>
-
-      <!-- Quest Objective -->
-      <div class="bg-zinc-900 border border-amber-500/30 rounded-lg p-2 text-xs font-pixel font-bold text-amber-100 leading-snug min-h-[36px] flex items-center justify-center">
-        <p id="taskText">Mission objective</p>
-      </div>
-
-      <div class="bg-purple-950/90 py-0.5 px-4 rounded-lg border border-purple-700/80 inline-block">
-        <div id="timerDisplay" class="text-xl font-black font-mono tracking-tight text-amber-300">05:00</div>
-      </div>
-    </div>
-
-    <!-- Controls -->
-    <div class="space-y-1.5 font-pixel">
-      <div id="preStartControls" class="grid grid-cols-2 gap-2">
-        <button onclick="skipTask()" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-zinc-300 font-bold py-2 rounded-xl text-xs uppercase tracking-wider active:scale-95 transition">
-          Scout Ahead ↷
-        </button>
-        <button onclick="startTask()" class="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold py-2 rounded-xl text-xs uppercase tracking-wider shadow-lg active:scale-95 transition">
-          Accept Quest ⚔️
-        </button>
-      </div>
-
-      <div id="activeControls" class="hidden">
-        <button onclick="completeStoryTask()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-xl text-xs uppercase tracking-wider shadow-lg active:scale-95 transition">
-          Complete & Advance Plot 📜
-        </button>
-      </div>
-    </div>
-
-    <!-- Story Log Vault -->
-    <div class="pt-1 border-t border-zinc-800/80 text-left">
-      <div class="text-[10px] font-pixel text-zinc-400 tracking-wider font-bold">CHRONICLES OF THE REALM:</div>
-      <div id="storyLog" class="text-xs font-pixel text-amber-200/80 bg-zinc-950/60 p-2 rounded-xl border border-zinc-800 mt-1 min-h-[28px]">
-        The Court prepares for the Great Migration...
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    const petPhotos = {
-      reginald: "https://i.postimg.cc/HkfQhnP9/IMG-6186.jpg",
-      samoa: "https://i.postimg.cc/sDMGCyWK/IMG-6184.jpg",
-      quinn: "https://i.postimg.cc/dtfdhDFH/IMG-6182.jpg",
-      bird: "https://i.postimg.cc/k4jGLhXH/IMG-6185.jpg"
-    };
-
-    // Sequential Story Campaign
-    const campaignChapters = [
-      {
-        title: "ACT I: SECURING THE FORTRESS",
-        subtitle: "Scout the borders & clear the floorways",
-        quests: [
-          {
-            charKey: "quinn",
-            name: "Quinn the Royal Guard",
-            quote: "\"Intruders lurk across the floors! Patrol the perimeter and clear rogue objects before the packing carts arrive!\"",
-            task: "Clear all misplaced floor items and return 5 items to their home rooms.",
-            time: 300,
-            log: "Quinn secured the lower corridors."
-          },
-          {
-            charKey: "reginald",
-            name: "King Reginald T. Featherbottom",
-            quote: "\"The counters are smothered in mortal papers and debris! Cleanse my throne platform at once!\"",
-            task: "Wipe down and completely sanitize 1 primary surface or table.",
-            time: 420,
-            log: "The King's platform was purified."
-          },
-          {
-            charKey: "samoa",
-            name: "Lady Samoa of the Islands",
-            quote: "\"The wardrobe is choked with dead fabrics! Surrender 5 unworn garments to the donation vault!\"",
-            task: "Bag 5 clothing items to donate to travelers.",
-            time: 360,
-            log: "Lady Samoa banished unnecessary garments."
-          },
-          {
-            charKey: "bird",
-            name: "Bird the Royal Herald",
-            quote: "\"*Fanfare!* The scrap scrolls must burn! Shred 10 ancient receipts and junk papers!\"",
-            task: "Toss or shred 10 pieces of paper clutter.",
-            time: 240,
-            log: "Bird destroyed the ancient scrap scrolls."
-          }
-        ]
-      },
-      {
-        title: "ACT II: PACKING THE CARAVAN",
-        subtitle: "Box the relics & seal the containers",
-        quests: [
-          {
-            charKey: "bird",
-            name: "Bird the Royal Herald",
-            quote: "\"The heavy transport chests have opened! Fill one complete box with library or shelf decor!\"",
-            task: "Pack, seal, and label 1 sturdy moving box.",
-            time: 600,
-            log: "The first royal crate was packed and labeled."
-          },
-          {
-            charKey: "quinn",
-            name: "Quinn the Royal Guard",
-            quote: "\"Cardboard invaders must be crushed to make room in the cart! Stomp 4 boxes flat!\"",
-            task: "Break down and stomp 4 empty cardboard boxes.",
-            time: 300,
-            log: "Quinn flattened the cardboard invaders."
-          },
-          {
-            charKey: "samoa",
-            name: "Lady Samoa of the Islands",
-            quote: "\"Duplicate tools will overburden our steeds! Pull 3 redundant kitchen or work tools!\"",
-            task: "Pull 3 duplicate items for donation or exile.",
-            time: 360,
-            log: "Excess weight was discarded from the carts."
-          },
-          {
-            charKey: "reginald",
-            name: "King Reginald T. Featherbottom",
-            quote: "\"FINAL DECREE: Empty the royal junk drawer completely! Pack the treasures, trash the rest!\"",
-            task: "Fully purge and sort 1 messy drawer.",
-            time: 480,
-            log: "The King declared the fortress ready for departure!"
-          }
-        ]
-      }
-    ];
-
-    let currentChapterIdx = parseInt(localStorage.getItem('court_story_chapter') || '0');
-    let currentQuestIdx = parseInt(localStorage.getItem('court_story_quest') || '0');
-    let timerInterval = null;
-    let secondsLeft = 300;
-
-    function renderStoryUI() {
-      const chapter = campaignChapters[currentChapterIdx] || campaignChapters[0];
-      const quest = chapter.quests[currentQuestIdx] || chapter.quests[0];
-
-      document.getElementById('chapterTitle').textContent = chapter.title;
-      document.getElementById('chapterSub').textContent = chapter.subtitle;
-      document.getElementById('storyStepText').textContent = `ACT ${currentChapterIdx + 1} - QUEST ${currentQuestIdx + 1}/${chapter.quests.length}`;
-
-      const totalQuests = campaignChapters.reduce((acc, c) => acc + c.quests.length, 0);
-      const completedOverall = (currentChapterIdx * 4) + currentQuestIdx;
-      document.getElementById('storyProgressBar').style.width = `${(completedOverall / totalQuests) * 100}%`;
-
-      document.getElementById('characterPhoto').src = petPhotos[quest.charKey];
-      document.getElementById('characterName').textContent = quest.name;
-      document.getElementById('characterQuote').textContent = quest.quote;
-      document.getElementById('taskText').textContent = quest.task;
-
-      secondsLeft = quest.time;
-      const m = Math.floor(secondsLeft / 60);
-      const s = secondsLeft % 60;
-      document.getElementById('timerDisplay').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-
-      document.getElementById('activeControls').classList.add('hidden');
-      document.getElementById('preStartControls').classList.remove('hidden');
-
-      const lastLog = localStorage.getItem('court_last_log');
-      if (lastLog) {
-        document.getElementById('storyLog').textContent = `📜 Latest Chronicle: ${lastLog}`;
-      }
-    }
-
-    function startTask() {
-      document.getElementById('preStartControls').classList.add('hidden');
-      document.getElementById('activeControls').classList.remove('hidden');
-
-      timerInterval = setInterval(() => {
-        if (secondsLeft > 0) {
-          secondsLeft--;
-          const m = Math.floor(secondsLeft / 60);
-          const s = secondsLeft % 60;
-          document.getElementById('timerDisplay').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        } else {
-          clearInterval(timerInterval);
-          document.getElementById('timerDisplay').textContent = "TIME UP!";
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign Clutter Chronicles - RLRPG</title>
+    <style>
+        :root {
+            --bg-color: #2c1a12;
+            --parchment-base: #f4e4bc;
+            --parchment-border: #a17a56;
+            --gold-accent: #c9a55c;
+            --text-dark: #3e2816;
+            --quinn-red: #8b0000;
+            --samoa-blue: #0047ab;
+            --reginald-gold: #b8860b;
         }
-      }, 1000);
-    }
 
-    function skipTask() {
-      const chapter = campaignChapters[currentChapterIdx];
-      currentQuestIdx = (currentQuestIdx + 1) % chapter.quests.length;
-      renderStoryUI();
-    }
+        body {
+            font-family: 'Georgia', serif;
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-    function completeStoryTask() {
-      clearInterval(timerInterval);
-      
-      try {
-        confetti({ particleCount: 70, spread: 60, origin: { y: 0.8 } });
-      } catch (e) {}
+        /* RPG SPLASH SCREEN OVERLAY */
+        #splash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            pointer-events: none;
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-      const chapter = campaignChapters[currentChapterIdx];
-      const quest = chapter.quests[currentQuestIdx];
-      localStorage.setItem('court_last_log', quest.log);
+        #splash-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
 
-      currentQuestIdx++;
-      if (currentQuestIdx >= chapter.quests.length) {
-        currentQuestIdx = 0;
-        currentChapterIdx = Math.min(campaignChapters.length - 1, currentChapterIdx + 1);
-      }
+        #splash-parchment {
+            background-color: var(--parchment-base);
+            border: 8px solid var(--parchment-border);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(201, 165, 92, 0.5);
+            max-width: 500px;
+            position: relative;
+        }
 
-      localStorage.setItem('court_story_chapter', currentChapterIdx);
-      localStorage.setItem('court_story_quest', currentQuestIdx);
+        #splash-icon-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            border: 5px solid var(--gold-accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-color);
+        }
 
-      document.getElementById('characterQuote').textContent = "\"The decree is fulfilled! The Great Migration marches forward!\"";
-      document.getElementById('taskText').textContent = "Quest recorded into the Royal Chronicles!";
+        #splash-pet-icon {
+            font-size: 80px;
+        }
 
-      setTimeout(() => {
-        renderStoryUI();
-      }, 2500);
-    }
+        #splash-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--reginald-gold);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
 
-    renderStoryUI();
-  </script>
+        #splash-dialogue {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: var(--text-dark);
+        }
+
+        #splash-continue {
+            background-color: var(--bg-color);
+            color: var(--gold-accent);
+            border: 2px solid var(--gold-accent);
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            text-transform: uppercase;
+        }
+
+        /* MAIN GAME INTERFACE */
+        #game-view {
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--parchment-base);
+            border: 6px solid var(--parchment-border);
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: var(--bg-color);
+            color: var(--gold-accent);
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 4px solid var(--gold-accent);
+        }
+
+        #progress-area {
+            background-color: rgba(62, 40, 22, 0.1);
+            padding: 10px 15px;
+            border-bottom: 2px solid var(--parchment-border);
+            text-align: center;
+        }
+
+        #mission-card {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #quest-meta {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #quest-location-zone {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--quinn-red);
+            text-transform: uppercase;
+        }
+
+        #quest-pet-name {
+            font-size: 16px;
+            color: #666;
+            font-style: italic;
+        }
+
+        #quest-description {
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid var(--parchment-border);
+            padding: 15px;
+            font-size: 18px;
+            line-height: 1.5;
+            flex-grow: 1;
+            margin-bottom: 20px;
+        }
+
+        #timer-display {
+            font-size: 40px;
+            color: var(--quinn-red);
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        #action-button {
+            width: 100%;
+            background-color: #c9a55c;
+            color: #fff;
+            border: none;
+            padding: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        #action-button:hover { background-color: #bfa050; }
+
+        footer {
+            background-color: var(--parchment-border);
+            color: #fff;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. RPG SPLASH SCREEN OVERLAY -->
+    <div id="splash-overlay">
+        <div id="splash-parchment">
+            <div id="splash-icon-container">
+                <div id="splash-pet-icon">🐾</div>
+            </div>
+            <div id="splash-title">Royal Decree</div>
+            <div id="splash-dialogue">Hear ye, champion. The Siege Fog is thick in the Indiana Fortress. A fresh mission has been declared!</div>
+            <button id="splash-continue" onclick="acceptMission()">Accept Quest</button>
+        </div>
+    </div>
+
+    <!-- 2. MAIN GAME INTERFACE -->
+    <div id="game-view">
+        <header>FORTRESS PREPARATION MANUAL</header>
+
+        <div id="progress-area">
+            CHESTS SECURED: <span id="boxes-packed-count">0</span> | INVENTORY cleared: <span id="percent-complete">0%</span>
+        </div>
+
+        <div id="mission-card">
+            <div id="quest-meta">
+                <div id="quest-location-zone">ZONE: BEDROOM WARD</div>
+                <div id="quest-pet-name">Assigned by Quinn the Guard</div>
+            </div>
+
+            <div id="quest-description">Scan the Scroll of Departure (The Bedroom Tag) to receive thy next packing decree.</div>
+
+            <div id="timer-display">15:00</div>
+
+            <button id="action-button" onclick="completeQuest()">DEPLOY TO ZONE</button>
+        </div>
+
+        <footer>Sovereign Court & Co. | Indiana Division</footer>
+    </div>
+
+    <script>
+        // RPG CORE DATA: The Task & Location Dispatch Pool
+        const PET_ROLES = {
+            quinn: { name: "Quinn the Guard", icon: "🐶", color: "var(--quinn-red)" },
+            samoa: { name: "Lady Samoa", icon: "🐱", color: "var(--samoa-blue)" },
+            reginald: { name: "King Reginald", icon: "👑", color: "var(--reginald-gold)" }
+        };
+
+        const QUEST_POOL = [
+            { pet: 'quinn', room: 'Kitchen Armory', task: 'Sort the cutlery drawer and box 1 priority item.', timer: 900 },
+            { pet: 'samoa', room: 'Bedroom Ward', task: 'Purge 5 items from the wardrobe Vault (Donation/Trash).', timer: 900 },
+            { pet: 'quinn', room: 'Living Room Keep', task: 'Pack one shelf of books/media and seal the chest.', timer: 900 },
+            { pet: 'samoa', room: 'Kitchen Armory', task: 'Check expired goods in the main pantry and purge 10 items.', timer: 900 },
+            { pet: 'quinn', room: 'The Garage Caverns', task: 'Sort the workbench. Group tools and wipe surfaces for 15 mins.', timer: 900 },
+            { pet: 'reginald', room: 'Bedroom Ward', task: 'Untangle the wire abyss: Secure all phone & device chargers.', timer: 600 }
+        ];
+
+        let currentQuestIndex = null;
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let totalPacked = localStorage.getItem('boxesPacked') || 0;
+
+        // UI Initialization
+        document.getElementById('boxes-packed-count').innerText = totalPacked;
+
+        // RPG ENGINE 1: Trigger the Splash Scene Cutscene
+        function showSplashCutscene(quest, isIntro) {
+            const pet = PET_ROLES[quest.pet];
+            const splash = document.getElementById('splash-overlay');
+            const icon = document.getElementById('splash-pet-icon');
+            const title = document.getElementById('splash-title');
+            const dialogue = document.getElementById('splash-dialogue');
+            const button = document.getElementById('splash-continue');
+
+            icon.innerText = pet.icon;
+            title.innerText = isIntro ? "Fresh Decree" : "VICTORY ACHIEVED!";
+            title.style.color = pet.color;
+            dialogue.innerText = isIntro ? `Quinn reports movement in the ${quest.room}! Champion, deploy swiftly and resolve this objective.` : `Order is restored to the ${quest.room}. King Reginald acknowledges thy victory!`;
+            button.innerText = isIntro ? "DEPLPY TO ZONE" : "Claim Royal Favor";
+            
+            splash.classList.add('active');
+        }
+
+        // RPG ENGINE 2: Mission Dispatch
+        function dispatchNewMission() {
+            // Pick a random quest from the pool
+            currentQuestIndex = Math.floor(Math.random() * QUEST_POOL.length);
+            const quest = QUEST_POOL[currentQuestIndex];
+
+            // 1. Load the data to the interface
+            const petData = PET_ROLES[quest.pet];
+            document.getElementById('quest-location-zone').innerText = `ZONE: ${quest.room.toUpperCase()}`;
+            document.getElementById('quest-location-zone').style.color = petData.color;
+            document.getElementById('quest-pet-name').innerText = `Decree of ${petData.name}`;
+            document.getElementById('quest-description').innerText = quest.task;
+            timerSeconds = quest.timer;
+            updateTimerDisplay();
+
+            // 2. Clear previous timer and set to default state
+            clearInterval(timerInterval);
+            document.getElementById('action-button').innerText = "BEGIN BLITZ (15 MIN)";
+
+            // 3. Show the Intro Splash Screen
+            showSplashCutscene(quest, true);
+        }
+
+        // Action: Accept the mission from the splash screen
+        function acceptMission() {
+            const splash = document.getElementById('splash-overlay');
+            splash.classList.remove('active');
+            startTimer(); // The timer only starts once you "Deploy"
+        }
+
+        // Timer Logic
+        function startTimer() {
+            document.getElementById('action-button').innerText = "MARK TASK COMPLETE";
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.innerText = "TIME'S UP!";
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            document.getElementById('timer-display').innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // RPG ENGINE 3: Task Complete Milestone
+        function completeQuest() {
+            if (currentQuestIndex === null) return; // Prevent clicking before mission
+
+            // 1. Bank the Victory
+            clearInterval(timerInterval);
+            totalPacked++;
+            localStorage.setItem('boxesPacked', totalPacked);
+            document.getElementById('boxes-packed-count').innerText = totalPacked;
+
+            // 2. Show Victory Splash Screen
+            showSplashCutscene(QUEST_POOL[currentQuestIndex], false);
+        }
+
+        // INIT: On initial scan, dispatch the first randomized mission.
+        dispatchNewMission();
+    </script>
 </body>
 </html>
