@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Mobile App Full-Screen Settings -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Royal Court">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#09090b">
+  
+  <title>The Royal Court of King Reginald</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <style>
+    .font-pixel { font-family: 'VT323', monospace; }
+    @keyframes regal-hover {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-4px) scale(1.02); }
+    }
+    .anim-portrait { animation: regal-hover 3s ease-in-out infinite; }
+    
+    /* Prevent iOS rubber-band overscroll */
+    html, body {
+      overscroll-behavior-y: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-zinc-950 text-amber-50 min-h-screen flex items-center justify-center p-3 select-none">
+
+  <!-- Castle Shell -->
+  <div class="max-w-xs w-full bg-gradient-to-b from-purple-950 via-zinc-900 to-zinc-950 border-4 border-amber-500/60 rounded-[44px] p-5 shadow-2xl space-y-3.5 text-center my-auto">
+    
+    <!-- King's Happiness Meter -->
+    <div class="space-y-1 bg-zinc-950/70 border border-purple-800/60 p-2.5 rounded-2xl">
+      <div class="flex justify-between items-center text-xs font-pixel text-amber-300 font-bold px-1">
+        <span>👑 KING'S HAPPINESS</span>
+        <span id="happinessPercent">0%</span>
+      </div>
+      <div class="w-full bg-purple-950 h-3 rounded-full border border-purple-700/60 overflow-hidden p-0.5">
+        <div id="happinessBar" class="bg-gradient-to-r from-amber-500 to-emerald-400 h-full w-0 rounded-full transition-all duration-500"></div>
+      </div>
+    </div>
+
+    <!-- Active Character Screen -->
+    <div class="bg-[#1b1326] border-4 border-amber-500/40 rounded-3xl p-3.5 shadow-inner space-y-2 relative overflow-hidden">
+      
+      <!-- Real Portrait Frame -->
+      <div class="flex items-center justify-center py-1 anim-portrait">
+        <div class="w-32 h-32 rounded-full border-4 border-amber-400 shadow-xl overflow-hidden bg-zinc-900 flex items-center justify-center ring-4 ring-purple-950">
+          <img id="characterPhoto" src="" alt="Royal Character" class="w-full h-full object-cover">
+        </div>
+      </div>
+
+      <!-- Character Name -->
+      <h2 id="characterName" class="font-pixel text-base font-black tracking-wider text-amber-300 uppercase leading-tight">
+        Character Name
+      </h2>
+
+      <!-- Character Story Dialogue -->
+      <div class="bg-purple-950/60 border border-purple-800/50 rounded-xl p-2.5 text-xs font-pixel text-purple-200 italic leading-relaxed text-left">
+        <span id="characterQuote">"Royal decree goes here..."</span>
+      </div>
+
+      <!-- Action Mission -->
+      <div class="bg-zinc-900 border border-amber-500/30 rounded-xl p-2 text-xs font-pixel font-bold text-amber-100 leading-snug">
+        <p id="taskText">Task instructions here</p>
+      </div>
+
+      <!-- Countdown Clock -->
+      <div class="bg-purple-950/80 py-1 px-5 rounded-xl border border-purple-700/80 inline-block">
+        <div id="timerDisplay" class="text-2xl font-black font-mono tracking-tight text-amber-300">05:00</div>
+      </div>
+
+    </div>
+
+    <!-- Interactive Buttons -->
+    <div class="space-y-2 font-pixel">
+      
+      <!-- Pre-Start Controls -->
+      <div id="preStartControls" class="grid grid-cols-2 gap-2">
+        <button onclick="skipTask()" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-zinc-300 font-bold py-2.5 rounded-2xl text-xs uppercase tracking-wider active:scale-95 transition">
+          Skip ↷
+        </button>
+        <button onclick="startTask()" class="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold py-2.5 rounded-2xl text-xs uppercase tracking-wider shadow-lg active:scale-95 transition">
+          Start Task ⚔️
+        </button>
+      </div>
+
+      <!-- Active Timer Button -->
+      <div id="activeControls" class="hidden">
+        <button onclick="completeTask()" class="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-3 rounded-2xl text-sm uppercase tracking-wider shadow-lg active:scale-95 transition">
+          Task Done! (+Happiness) 🐟
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // Direct Image Links
+    const petPhotos = {
+      reginald: "https://i.postimg.cc/HkfQhnP9/IMG-6186.jpg",
+      samoa: "https://i.postimg.cc/sDMGCyWK/IMG-6184.jpg",
+      quinn: "https://i.postimg.cc/dtfdhDFH/IMG-6182.jpg",
+      bird: "https://i.postimg.cc/k4jGLhXH/IMG-6185.jpg"
+    };
+
+    const tasks = [
+      // King Reginald
+      {
+        charKey: "reginald",
+        name: "King Reginald T. Featherbottom",
+        quote: "\"I require an expansive, pristine sunspot for my royal nap. Rid this surface of your human rubbish at once!\"",
+        task: "Clear & sanitize 1 flat surface (desk, table, or counter) completely.",
+        time: 480
+      },
+      {
+        charKey: "reginald",
+        name: "King Reginald T. Featherbottom",
+        quote: "\"Look upon these broken items and cartons! Into the black sack of exile they must go, never to displease my whiskers again.\"",
+        task: "Black Bag Blitz: Fill 1 grocery or trash bag with broken junk/trash.",
+        time: 300
+      },
+      {
+        charKey: "reginald",
+        name: "King Reginald T. Featherbottom",
+        quote: "\"Ancient scrolls and junk mail clutter my sight. Shred them, toss them, and bring peace to my castle!\"",
+        task: "Toss or shred 10 pieces of junk mail, old receipts, or scrap paper.",
+        time: 240
+      },
+
+      // Lady Samoa
+      {
+        charKey: "samoa",
+        name: "Lady Samoa of the Islands",
+        quote: "\"The castle wardrobe is suffocating with unworn fabrics. Surrender them to the donation vault for the peasants!\"",
+        task: "Pull 5 clothing items you haven't worn in a year for donation.",
+        time: 420
+      },
+      {
+        charKey: "samoa",
+        name: "Lady Samoa of the Islands",
+        quote: "\"Our relocation caravan needs coin! Locate a high-value relic, take 3 clear photos, and ready it for the market.\"",
+        task: "Pick 1 sellable item, snap 3 photos, and place it in the sell bin.",
+        time: 420
+      },
+      {
+        charKey: "samoa",
+        name: "Lady Samoa of the Islands",
+        quote: "\"Duplicate tools offend the royal treasurer! Keep the finest one; the lesser clones must be donated.\"",
+        task: "Find 3 duplicate household items/tools and put them in the donate box.",
+        time: 360
+      },
+
+      // Quinn the Royal Guard
+      {
+        charKey: "quinn",
+        name: "Quinn the Royal Guard",
+        quote: "\"Halt! Intruding cardboard boxes have breached the gate! I will stand guard while you crush and stack them!\"",
+        task: "Flatten, stomp down, and neatly stack 5 empty cardboard boxes.",
+        time: 300
+      },
+      {
+        charKey: "quinn",
+        name: "Quinn the Royal Guard",
+        quote: "\"Sniff sniff... rogue objects are littering the royal floors! Gather 5 misplaced items and return them to their home rooms!\"",
+        task: "Pick up 5 out-of-place floor items and put them in their actual rooms.",
+        time: 300
+      },
+
+      // Bird the Royal Herald
+      {
+        charKey: "bird",
+        name: "Bird the Royal Herald",
+        quote: "\"*Fanfare Whistle!* The Royal Caravan departs soon! Pack non-perishables with haste before the great journey!\"",
+        task: "Completely fill and seal 1 moving box of non-essentials from one zone.",
+        time: 600
+      },
+      {
+        charKey: "bird",
+        name: "Bird the Royal Herald",
+        quote: "\"*Trumpet Call!* Dark secrets lurk in the messy drawers! Dump it completely—pack relics, trash the debris!\"",
+        task: "Dump 1 entire messy drawer: pack essentials, discard/donate the rest.",
+        time: 480
+      },
+      {
+        charKey: "bird",
+        name: "Bird the Royal Herald",
+        quote: "\"*Trill!* A tangled nest of electric serpents has formed! Untangle, bind, and pack them neatly!\"",
+        task: "Untangle and organize 4 stray charging cables or mystery cords.",
+        time: 300
+      }
+    ];
+
+    let currentTask = null;
+    let timerInterval = null;
+    let secondsLeft = 300;
+
+    function playChime() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.15, ctx.currentTime + idx * 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.1 + 0.35);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(ctx.currentTime + idx * 0.1);
+          osc.stop(ctx.currentTime + idx * 0.1 + 0.4);
+        });
+      } catch (e) {}
+    }
+
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${m.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+
+    function updateHappinessUI() {
+      const happiness = Math.min(100, parseInt(localStorage.getItem('court_happiness') || '0'));
+      document.getElementById('happinessBar').style.width = `${happiness}%`;
+      document.getElementById('happinessPercent').textContent = `${happiness}%`;
+    }
+
+    function loadRandomTask() {
+      clearInterval(timerInterval);
+      currentTask = tasks[Math.floor(Math.random() * tasks.length)];
+      
+      document.getElementById('characterPhoto').src = petPhotos[currentTask.charKey];
+      document.getElementById('characterName').textContent = currentTask.name;
+      document.getElementById('characterQuote').textContent = currentTask.quote;
+      document.getElementById('taskText').textContent = currentTask.task;
+      
+      secondsLeft = currentTask.time;
+      document.getElementById('timerDisplay').textContent = formatTime(secondsLeft);
+
+      document.getElementById('activeControls').classList.add('hidden');
+      document.getElementById('preStartControls').classList.remove('hidden');
+    }
+
+    function skipTask() {
+      loadRandomTask();
+    }
+
+    function startTask() {
+      document.getElementById('preStartControls').classList.add('hidden');
+      document.getElementById('activeControls').classList.remove('hidden');
+
+      timerInterval = setInterval(() => {
+        if (secondsLeft > 0) {
+          secondsLeft--;
+          document.getElementById('timerDisplay').textContent = formatTime(secondsLeft);
+        } else {
+          clearInterval(timerInterval);
+          document.getElementById('timerDisplay').textContent = "TIME UP!";
+        }
+      }, 1000);
+    }
+
+    function completeTask() {
+      clearInterval(timerInterval);
+      playChime();
+
+      let currentHappy = parseInt(localStorage.getItem('court_happiness') || '0');
+      let newHappy = Math.min(100, currentHappy + 10);
+      localStorage.setItem('court_happiness', newHappy);
+      updateHappinessUI();
+
+      document.getElementById('characterQuote').textContent = "\"Splendid effort, human! The King purrs in delight!\"";
+      document.getElementById('taskText').textContent = "Task complete! Tribute recorded (+10% Happiness).";
+      
+      setTimeout(() => {
+        loadRandomTask();
+      }, 2200);
+    }
+
+    loadRandomTask();
+    updateHappinessUI();
+  </script>
+</body>
+</html>
