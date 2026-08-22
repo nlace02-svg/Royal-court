@@ -66,6 +66,13 @@
             text-shadow: 1px 1px 0 rgba(255,255,255,0.6);
         }
 
+        .chapter-tag {
+            font-size: 13px;
+            color: var(--text-main);
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
         /* PET PORTRAIT GALLERY */
         .court-portraits {
             display: grid;
@@ -88,8 +95,8 @@
 
         .portrait-frame.highlight {
             border-color: var(--red-accent);
-            box-shadow: 0 0 12px var(--red-accent);
-            transform: scale(1.04);
+            box-shadow: 0 0 14px var(--red-accent);
+            transform: scale(1.05);
             background: #4a1c10;
         }
 
@@ -112,7 +119,7 @@
             line-height: 1.1;
         }
 
-        /* PROGRESS STATS RIBBON */
+        /* PROGRESS STATS */
         .stats-ribbon {
             background: rgba(140,88,39,0.15);
             border: 1px solid var(--parchment-border);
@@ -125,9 +132,9 @@
             color: var(--text-main);
         }
 
-        /* MISSION CARD */
+        /* STORY & MISSION CARD */
         .mission-box {
-            background: rgba(255, 255, 255, 0.65);
+            background: rgba(255, 255, 255, 0.7);
             border: 2px solid var(--parchment-border);
             border-radius: 8px;
             padding: 14px;
@@ -154,13 +161,25 @@
             margin-bottom: 10px;
         }
 
+        .story-excerpt {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #2b1807;
+            background: rgba(140,88,39,0.08);
+            border-left: 3px solid var(--gold);
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            text-align: left;
+            border-radius: 0 4px 4px 0;
+        }
+
         .task-detail {
-            font-size: 16px;
+            font-size: 15px;
             line-height: 1.4;
             font-weight: bold;
-            color: var(--text-main);
+            color: var(--red-accent);
             margin: 10px 0 14px 0;
-            min-height: 44px;
+            min-height: 40px;
         }
 
         .timer {
@@ -196,7 +215,7 @@
         #splash-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(15, 8, 4, 0.92);
+            background: rgba(15, 8, 4, 0.94);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -218,15 +237,15 @@
             border: 6px double var(--parchment-border);
             border-radius: 12px;
             padding: 22px;
-            max-width: 400px;
+            max-width: 420px;
             width: 100%;
             text-align: center;
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
         }
 
         .splash-avatar {
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
             object-fit: cover;
             border-radius: 50%;
             border: 4px solid var(--gold);
@@ -245,10 +264,11 @@
         }
 
         .splash-body {
-            font-size: 15px;
-            line-height: 1.45;
+            font-size: 14px;
+            line-height: 1.5;
             color: var(--text-main);
             margin-bottom: 20px;
+            text-align: left;
         }
     </style>
 </head>
@@ -258,9 +278,9 @@
     <div id="splash-overlay">
         <div class="splash-card">
             <img id="splash-img" class="splash-avatar" src="" alt="Court Member">
-            <div id="splash-title" class="splash-heading">Royal Decree</div>
-            <div id="splash-text" class="splash-body">A new chamber purge mission has been announced by the Crown!</div>
-            <button class="btn-royal" onclick="closeSplash()">Accept Mission</button>
+            <div id="splash-title" class="splash-heading">Episode Cutscene</div>
+            <div id="splash-text" class="splash-body">The story unfolds as the court convenes...</div>
+            <button class="btn-royal" id="splash-btn" onclick="closeSplash()">Accept Mission</button>
         </div>
     </div>
 
@@ -268,9 +288,9 @@
     <div class="scroll-container">
         
         <header class="royal-header">
-            <div class="banner-subtitle">Royal Decree</div>
+            <div class="banner-subtitle">Campaign Storyline</div>
             <div class="banner-title">The Siege of Clutter</div>
-            <div style="font-size: 12px; color: #70471e; font-weight: bold;">FORTRESS PREPARATION CAMPAIGN</div>
+            <div class="chapter-tag" id="chapter-title-tag">ACT I: THE AWAKENING IN INDIANA</div>
         </header>
 
         <!-- 4 PET PORTRAITS -->
@@ -295,17 +315,22 @@
 
         <!-- PROGRESS STATS -->
         <div class="stats-ribbon">
-            <div>📦 CHESTS PACKED: <span id="stat-chests" style="color:var(--red-accent);">0</span></div>
-            <div>⚡ ROYAL FAVOR: <span id="stat-favor" style="color:var(--gold);">100</span></div>
+            <div>📖 CHAPTER: <span id="stat-chapter" style="color:var(--red-accent);">1 / 8</span></div>
+            <div>📦 CHESTS: <span id="stat-chests" style="color:var(--text-main);">0</span></div>
+            <div>⚡ FAVOR: <span id="stat-favor" style="color:var(--gold);">100</span></div>
         </div>
 
         <!-- MISSION ASSIGNMENT -->
         <div class="mission-box">
             <div class="zone-badge" id="zone-badge">BEDROOM WARD</div>
-            <div class="assigner-text" id="assigner-name">Assigned by Quinn the Guard</div>
+            <div class="assigner-text" id="assigner-name">Decree of King Reginald</div>
+
+            <div class="story-excerpt" id="story-lore">
+                "The shadows of forgotten boxes grow tall. We cannot begin preparing our migration carts until the main chamber perimeter is secured."
+            </div>
 
             <div class="task-detail" id="task-text">
-                Scan your bedroom scroll NFC tag to receive a randomized zone mission.
+                Real-World Objective: Clear floor items in the Bedroom and pack Box #1 with non-essentials.
             </div>
 
             <div class="timer" id="timer-display">15:00</div>
@@ -316,7 +341,6 @@
     </div>
 
     <script>
-        // Character Image Direct Links
         const PET_PORTRAITS = {
             reginald: 'https://i.postimg.cc/HkfQhnP9/IMG-6186.jpg',
             samoa:    'https://i.postimg.cc/sDMGCyWK/IMG-6184.jpg',
@@ -325,36 +349,85 @@
         };
 
         const PET_INFO = {
-            reginald: { name: 'King Reginald', img: PET_PORTRAITS.reginald, title: 'The Sovereign' },
-            samoa:    { name: 'Lady Samoa', img: PET_PORTRAITS.samoa, title: 'Grand Mistress' },
-            quinn:    { name: 'Quinn the Guard', img: PET_PORTRAITS.quinn, title: 'Perimeter Warden' },
-            bird:     { name: 'Bird the Herald', img: PET_PORTRAITS.bird, title: 'Crown Messenger' }
+            reginald: { name: 'King Reginald', img: PET_PORTRAITS.reginald, title: 'The Sovereign King' },
+            samoa:    { name: 'Lady Samoa', img: PET_PORTRAITS.samoa, title: 'Grand Mistress of the Vault' },
+            quinn:    { name: 'Quinn the Guard', img: PET_PORTRAITS.quinn, title: 'Commander of the Watch' },
+            bird:     { name: 'Bird the Herald', img: PET_PORTRAITS.bird, title: 'High Royal Herald' }
         };
 
-        // Task & Location Pool
-        const QUEST_POOL = [
-            { pet: 'quinn', zone: 'Bedroom Ward', text: 'Clear floor perimeter: pack or box 5 clothing/personal artifacts.', timer: 900 },
-            { pet: 'samoa', zone: 'Bedroom Ward', text: 'Sort wardrobe closet. Banish 5 expired or unneeded garments to the void.', timer: 900 },
-            { pet: 'bird', zone: 'Bedroom Nightstands', text: 'Untangle the wire vortex: bundle all cables and chargers safely.', timer: 600 },
-            { pet: 'quinn', zone: 'Kitchen Armory', text: 'Pack one full box of dry dishware or non-essential cookware.', timer: 900 },
-            { pet: 'samoa', zone: 'Pantry Catacombs', text: 'Inspect provisions: purge 8 expired foodstuffs to lighten the caravan.', timer: 900 },
-            { pet: 'reginald', zone: 'Living Room Keep', text: 'Sort shelf media: box 10 books or items and tape the chest securely.', timer: 900 },
-            { pet: 'quinn', zone: 'Garage Caverns', text: 'Workbench blitz: sort tools and consolidate hardware for 15 minutes.', timer: 900 }
+        // SERIALIZED STORY CAMPAIGN (Episode by Episode)
+        const STORY_CAMPAIGN = [
+            {
+                chapterNum: 1,
+                title: "Chapter I: The Decree of Mobilization",
+                pet: "reginald",
+                zone: "Bedroom Ward",
+                introCutscene: "King Reginald gazes out from his velvet tower. 'Mortals! A grand vision has gripped the Court. A new sanctuary calls, but the Indiana Fortress is sealed in clutter fog. We must begin systematic fortification immediately.'",
+                loreText: "The Sovereign King has ordered the first line of defense. The bedroom perimeter is currently vulnerable to loose apparel and wandering boxes.",
+                taskText: "REAL-WORLD QUEST: Clear the bedroom floor completely. Pack Box #1 with items you won't need this week and label it.",
+                epilogueCutscene: "With the perimeter cleared, King Reginald inspects the sealed chest with a nod. 'A worthy start. But Quinn reports ominous rustling in the deeper wardrobe...'",
+                timer: 900
+            },
+            {
+                chapterNum: 2,
+                title: "Chapter II: The Wardrobe Labyrinth",
+                pet: "quinn",
+                zone: "Closet Vault",
+                introCutscene: "Quinn the Guard stamps his paw with authority. 'Halt! The Fabric Fiends have taken root in the hanging vault! Old shirts and unloved relics weigh heavily upon our defenses!'",
+                loreText: "Quinn demands a strict purge to ensure only essential royal garments make the cut for future staging.",
+                taskText: "REAL-WORLD QUEST: Go through the closet. Select at least 5 garments to donate or trash, and neatly group hanging essentials.",
+                epilogueCutscene: "Quinn sniffs the neatly organized rack and gives an approving bark. 'The vault breathes freely once more! Lady Samoa now requests an audience in the kitchen catacombs.'",
+                timer: 900
+            },
+            {
+                chapterNum: 3,
+                title: "Chapter III: The Spice of Ancient Times",
+                pet: "samoa",
+                zone: "Kitchen Armory",
+                introCutscene: "Lady Samoa peers disdainfully into the kitchen cabinets with her jewel crown gleaming. 'Mortals... some of these dried herbs were sealed before the dawn of the last era. We shall not transport expired provisions!'",
+                loreText: "Lady Samoa's standards are absolute. The kitchen supplies must be purged of dead weight before any dish packing can begin.",
+                taskText: "REAL-WORLD QUEST: Check spice racks and pantry shelves. Discard all expired seasonings and stale goods.",
+                epilogueCutscene: "Lady Samoa licks her paw with satisfaction. 'The provisions are refined. Now Bird the Herald squawks of chaotic tendrils near the power stations.'",
+                timer: 600
+            },
+            {
+                chapterNum: 4,
+                title: "Chapter IV: The Serpent Cables",
+                pet: "bird",
+                zone: "Office / Media Zone",
+                introCutscene: "Bird the Herald flutters frantically! 'Squawk! The black wires of chaos writhe beneath the desks! Unmarked adapters and forgotten cables threaten to trap the royal legs!'",
+                loreText: "Bird requires swift sorting of electronics, remotes, and cables before they become an untangleable nightmare on pack day.",
+                taskText: "REAL-WORLD QUEST: Untangle all stray charging cables. Bag extra cords and safely box loose electronics accessories.",
+                epilogueCutscene: "Bird the Herald perches calmly. 'The electrical lines are secured in thy archives! The path to the Grand Living Room is now open.'",
+                timer: 900
+            },
+            {
+                chapterNum: 5,
+                title: "Chapter V: BOSS BATTLE — The Dust Golem",
+                pet: "quinn",
+                zone: "Living Room Keep",
+                introCutscene: "⚔️ BOSS ALERT: The Dust Golem has arisen behind the media consoles and book rows! Quinn the Guard raises his standard to lead the assault.",
+                loreText: "A massive staging milestone! Taming the living room entertainment zone requires boxing secondary media and wiping down surfaces.",
+                taskText: "BOSS OBJECTIVE: Pack 1 full box of books/games/media, seal it as Box #2, and wipe down the cleared surface!",
+                epilogueCutscene: "VICTORY! The Dust Golem crumbles into neat cardboard rows. Quinn lets out a triumphant howl that echoes across the fortress!",
+                timer: 1200
+            }
         ];
+
+        let chapterIdx = parseInt(localStorage.getItem('clutter_campaign_idx') || '0', 10);
+        let chestsPacked = parseInt(localStorage.getItem('clutter_chests') || '0', 10);
+        let favorPoints = parseInt(localStorage.getItem('clutter_favor') || '100', 10);
 
         let currentQuest = null;
         let timerSeconds = 900;
         let timerRunning = false;
         let timerInterval = null;
 
-        let chestsPacked = parseInt(localStorage.getItem('clutter_chests') || '0', 10);
-        let favorPoints = parseInt(localStorage.getItem('clutter_favor') || '100', 10);
-
         function updateStatsDisplay() {
+            document.getElementById('stat-chapter').innerText = `${Math.min(chapterIdx + 1, STORY_CAMPAIGN.length)} / ${STORY_CAMPAIGN.length}`;
             document.getElementById('stat-chests').innerText = chestsPacked;
             document.getElementById('stat-favor').innerText = favorPoints;
         }
-        updateStatsDisplay();
 
         function highlightPortrait(petKey) {
             ['reginald', 'samoa', 'quinn', 'bird'].forEach(p => {
@@ -365,13 +438,12 @@
             }
         }
 
-        // Trigger Splash Cutscene
         function triggerSplash(petKey, heading, message, buttonText) {
             const pet = PET_INFO[petKey];
             document.getElementById('splash-img').src = pet.img;
             document.getElementById('splash-title').innerText = heading;
             document.getElementById('splash-text').innerText = message;
-            document.querySelector('#splash-overlay .btn-royal').innerText = buttonText || "Accept Mission";
+            document.getElementById('splash-btn').innerText = buttonText || "Accept Mission";
             document.getElementById('splash-overlay').classList.add('show');
         }
 
@@ -379,14 +451,20 @@
             document.getElementById('splash-overlay').classList.remove('show');
         }
 
-        // New Mission Assignment
-        function rollNewMission() {
-            currentQuest = QUEST_POOL[Math.floor(Math.random() * QUEST_POOL.length)];
+        function loadCurrentChapter() {
+            if (chapterIdx >= STORY_CAMPAIGN.length) {
+                // Campaign loop or expansion
+                chapterIdx = STORY_CAMPAIGN.length - 1;
+            }
+
+            currentQuest = STORY_CAMPAIGN[chapterIdx];
             const pet = PET_INFO[currentQuest.pet];
 
+            document.getElementById('chapter-title-tag').innerText = currentQuest.title.toUpperCase();
             document.getElementById('zone-badge').innerText = currentQuest.zone;
-            document.getElementById('assigner-name').innerText = `Decree of ${pet.name}`;
-            document.getElementById('task-text').innerText = currentQuest.text;
+            document.getElementById('assigner-name').innerText = `Decree of ${pet.name} (${pet.title})`;
+            document.getElementById('story-lore').innerText = `"${currentQuest.loreText}"`;
+            document.getElementById('task-text').innerText = currentQuest.taskText;
 
             timerSeconds = currentQuest.timer;
             timerRunning = false;
@@ -394,14 +472,18 @@
             renderTimer();
 
             highlightPortrait(currentQuest.pet);
-            document.getElementById('action-btn').innerText = "DEPLOY TO ZONE (START 15M)";
+            updateStatsDisplay();
 
-            // Show Mission Splash Screen
+            document.getElementById('action-btn').innerText = "DEPLOY TO ZONE (START TIMER)";
+            document.getElementById('action-btn').style.background = "linear-gradient(180deg, #d4af37 0%, #a17a2a 100%)";
+            document.getElementById('action-btn').style.color = "#1b120c";
+
+            // Show Story Intro Splash Cutscene
             triggerSplash(
                 currentQuest.pet,
-                "New Royal Decree!",
-                `${pet.name} demands an expedition in the ${currentQuest.zone}! Purge the clutter and prepare the chamber.`,
-                "Accept Mission"
+                currentQuest.title,
+                currentQuest.introCutscene,
+                "Begin Chapter"
             );
         }
 
@@ -416,7 +498,7 @@
             if (!timerRunning) {
                 // Start Blitz Timer
                 timerRunning = true;
-                document.getElementById('action-btn').innerText = "MARK CHAMBER PURGED (COMPLETE)";
+                document.getElementById('action-btn').innerText = "MARK CHAPTER COMPLETE";
                 document.getElementById('action-btn').style.background = "linear-gradient(180deg, #8b1e1e 0%, #5a1212 100%)";
                 document.getElementById('action-btn').style.color = "#fff";
 
@@ -430,33 +512,39 @@
                     }
                 }, 1000);
             } else {
-                // Complete Quest
+                // Complete Quest and advance story
                 clearInterval(timerInterval);
                 timerRunning = false;
                 chestsPacked += 1;
-                favorPoints += 50;
+                favorPoints += 75;
 
+                const completedQuest = currentQuest;
+
+                // Advance campaign
+                if (chapterIdx < STORY_CAMPAIGN.length - 1) {
+                    chapterIdx += 1;
+                } else {
+                    chapterIdx = 0; // Loops or can add more chapters
+                }
+
+                localStorage.setItem('clutter_campaign_idx', chapterIdx);
                 localStorage.setItem('clutter_chests', chestsPacked);
                 localStorage.setItem('clutter_favor', favorPoints);
-                updateStatsDisplay();
 
-                const pet = PET_INFO[currentQuest.pet];
+                // Show Story Epilogue Splash Cutscene
                 triggerSplash(
-                    currentQuest.pet,
-                    "Chamber Cleansed!",
-                    `Splendid work! ${pet.name} commends thy diligence. 1 Chest secured & +50 Royal Favor earned!`,
-                    "Receive Next Decree"
+                    completedQuest.pet,
+                    "Chapter Conquered!",
+                    completedQuest.epilogueCutscene,
+                    "Next Chapter"
                 );
 
-                // Reset button style and roll next quest
-                document.getElementById('action-btn').style.background = "linear-gradient(180deg, #d4af37 0%, #a17a2a 100%)";
-                document.getElementById('action-btn').style.color = "#1b120c";
-                rollNewMission();
+                loadCurrentChapter();
             }
         }
 
         // Init on page load
-        rollNewMission();
+        loadCurrentChapter();
     </script>
 </body>
 </html>
